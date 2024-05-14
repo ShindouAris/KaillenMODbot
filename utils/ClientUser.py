@@ -1,9 +1,53 @@
 from __future__ import annotations
 
 import os
+import disnake
 from colorama import *
 from disnake.ext import commands
-from utils.server.server import Server       
+from utils.server.server import Server  
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class LoadBot:
+    
+    def load(self):
+        
+        DISCORD_TOKEN = os.environ.get("TOKEN")
+        
+        
+        intents = disnake.Intents()
+        intents.voice_states = True
+        intents.message_content = True
+        intents.guilds = True
+        intents.moderation = True
+        intents.messages = True
+           
+        command_sync_config = commands.CommandSyncFlags(
+                            allow_command_deletion=False,
+                            sync_commands=False,
+                            sync_commands_debug=False,
+                            sync_global_commands=False,
+                            sync_guild_commands=False
+                        )  
+        
+        bot  = ClientUser(intents=intents, command_prefix="?", command_sync_flag=command_sync_config)
+        
+        
+        
+        bot.load_modules()
+        print("-"*40)
+        bot.load_events()
+        
+
+        
+        try:
+            bot.run(DISCORD_TOKEN)
+        except Exception as e:
+            if  "LoginFailure" in str(e):
+                print(f"Đăng nhập thất bại: {repr(e)}")
+
+        
 
 class ClientUser(commands.AutoShardedBot):
     
@@ -13,9 +57,15 @@ class ClientUser(commands.AutoShardedBot):
         self.db =None
     
     
-    # async def on_ready(self):   
-    #     self.db = await self.serverdb.connect()
-        
+    async def on_ready(self):
+            print("-"*40)
+            await self.serverdb.connect()
+            print('Logged in as')
+            print(self.user.name)
+            print(self.user.id)
+            print('-'*40)
+    
+
     def load_modules(self):
 
         modules_dir = "Module"
@@ -30,8 +80,15 @@ class ClientUser(commands.AutoShardedBot):
             for file in files:
                 filename, _ = os.path.splitext(file)
                 module_filename = os.path.join(modules_dir, filename).replace('\\', '.').replace('/', '.')
-                self.load_extension(module_filename)
-                print(f'Module {file} Đã tải lên thành công')
+                try:
+                    self.reload_extension(module_filename)
+                    print(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
+                except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
+                    self.load_extension(module_filename)
+                    print(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
+                except Exception as e:
+                    print(f"[❌] Đã có lỗi xảy ra với Module {file}: Lỗi: {repr(e)}")
+                    continue
                 
         return load_status
 
@@ -50,7 +107,14 @@ class ClientUser(commands.AutoShardedBot):
             for file in files:
                 filename, _ = os.path.splitext(file)
                 module_filename = os.path.join(eventdir, filename).replace('\\', '.').replace('/', '.')
-                self.load_extension(module_filename)
-                print(f'Event {file} Đã tải lên thành công')
+                try:
+                    self.reload_extension(module_filename)
+                    print(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
+                except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
+                    self.load_extension(module_filename)
+                    print(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
+                except Exception as e:
+                    print(f" [❌] Đã có lỗi xảy ra với Event {file}: Lỗi: {repr(e)}")
+                    continue
                 
         return event_loadstat

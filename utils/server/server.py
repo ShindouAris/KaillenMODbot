@@ -22,7 +22,7 @@ class Server():
         self.warn_log = self.client.db.warn_log
         self.servercfg = self.client.db.servercfg
         self.id_tk = self.client.db.id_tk
-        print(f"{Fore.GREEN}[MongoDB] - [OK] Connected to Server Database")
+        print(f"{Fore.GREEN}[ ✅ ] [MongoDB] Connected to Server Database")
 
     async def check_role(self ,guild: int, role_id: int):
         data = await s2a(self.ignored_roles.find_one)({"guild_id": guild, "role_id": role_id})
