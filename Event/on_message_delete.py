@@ -2,7 +2,7 @@ import disnake
 from disnake.ext import commands
 import pytz # if you don't have this, do pip install pytz, it's used for timezones
 from datetime import datetime
-from utils.client import BotCore
+from utils.ClientUser import ClientUser as BotCore
 
 HCM = pytz.timezone('Asia/Ho_Chi_Minh')
 

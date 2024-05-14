@@ -2,20 +2,28 @@ import disnake
 from disnake.ext import commands
 import os
 from dotenv import load_dotenv
+from utils.ClientUser import ClientUser
 
 intents = disnake.Intents()
 intents.voice_states = True
-intents.message_content = False
-intents.messages = False
+intents.message_content = True
+intents.guilds = True
+intents.moderation = True
+intents.messages = True
 
 load_dotenv()
-bot = commands.Bot(intents=intents)
 
-bot.remove_command("help")
+command_sync_config = commands.CommandSyncFlags(
+                    allow_command_deletion=True,
+                    sync_commands=True,
+                    sync_commands_debug=True,
+                    sync_global_commands=True,
+                    sync_guild_commands=True
+                )
+
+bot  = ClientUser(intents=intents, command_prefix="?", command_sync_flag=command_sync_config)
 
 DISCORD_TOKEN = os.environ.get("TOKEN")
-
-initial_extensions = "filemodule", "Event"
 
 @bot.event
 async def on_ready():
@@ -30,14 +38,10 @@ async def on_ready():
     print(bot.user.id)
     print('------')
     
-    for item in os.walk(initial_extensions):
-        files = filter(lambda f: f.endswith('.py'), item[-1])
-        for file in files:
-            filename, _ = os.path.splitext(file)
-            module_filename = os.path.join(initial_extensions, filename).replace('\\', '.').replace('/', '.')
-            bot.load_extension(module_filename)
-            print(f'Module {file} Đã tải lên thành công')
-            
+    bot.load_modules()
+    bot.load_events()
+    await bot.serverdb.connect()
+    
 try:
     bot.run(DISCORD_TOKEN)
 except Exception as e:

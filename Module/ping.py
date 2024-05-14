@@ -9,7 +9,7 @@ class Ping(commands.Cog):
     def __init__(self, bot: ClientUser):
         self.bot = bot
 
-    @commands.command()
+    @commands.slash_command()
     async def ping(self, ctx):
         embed = disnake.Embed(
             title="Pong!",

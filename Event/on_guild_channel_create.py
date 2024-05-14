@@ -2,12 +2,12 @@ import disnake
 from disnake.ext import commands
 import pytz # if you don't have this, do pip install pytz, it's used for timezones
 from datetime import datetime
-from utils.client import BotCore
+from utils.ClientUser import ClientUser
 
 HCM = pytz.timezone('Asia/Ho_Chi_Minh')
 
 class OnGuildChannelCreate(commands.Cog):
-    def __init__(self, client: BotCore):
+    def __init__(self, client: ClientUser):
         self.client = client 
 
     @commands.Cog.listener()
@@ -34,5 +34,5 @@ class OnGuildChannelCreate(commands.Cog):
 
         await logchannel.send(embed=embed)
 
-def setup(client: BotCore):
+def setup(client: ClientUser):
     client.add_cog(OnGuildChannelCreate(client))

@@ -1,10 +1,10 @@
 import sqlite3
 from colorama import Fore
-
+from dotenv import load_dotenv
 from os import environ
 from pymongo import MongoClient, errors
 from asgiref.sync import sync_to_async as s2a
-
+load_dotenv()
 SERVER_URI = environ.get("MONGOSERVER")
 class Server():
     def __init__(self):
