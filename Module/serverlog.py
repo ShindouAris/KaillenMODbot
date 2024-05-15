@@ -17,8 +17,7 @@ class Serverlog(commands.Cog):
     desc_prefix = f"[{emoji} {name}] | "
     
     @commands.cooldown(1, 300, commands.BucketType.guild) 
-    @commands.bot_has_guild_permissions(manage_guild=True)
-    @commands.has_guild_permissions(manage_guild=True)
+    @commands.has_guild_permissions(manage_guild=True, manage_channels=True)
     @commands.slash_command(name="serverlog", description=f"{desc_prefix}Set the serverlog channel", options=[Option("channel", "The channel to set the serverlog to", OptionType.channel, required=True)])
     async def serverlog(self, ctx: Union[commands.Context, ApplicationCommandInteraction], channel: disnake.TextChannel):
         check = await self.bot.serverdb.check_database(ctx.guild.id)
@@ -51,7 +50,6 @@ class Serverlog(commands.Cog):
                         await ctx.send(embed=embed)
 
     @commands.cooldown(1, 300, commands.BucketType.guild) 
-    @commands.bot_has_guild_permissions(manage_roles=True, manage_guild=True)
     @commands.has_guild_permissions(manage_roles=True, manage_guild=True)
     @commands.slash_command(name="ignorerole", description=f"{desc_prefix} Ignore a role from serverlog", 
                             options=[disnake.Option("role", "The role to ignore", OptionType.role, required=True, max_length=20, min_length=1, max_value=20)])
