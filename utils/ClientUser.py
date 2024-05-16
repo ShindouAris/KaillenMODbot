@@ -23,12 +23,13 @@ class LoadBot:
         intents.moderation = True
         intents.messages = True
            
+        sync_cfg = True
         command_sync_config = commands.CommandSyncFlags(
-                            allow_command_deletion=False,
-                            sync_commands=False,
-                            sync_commands_debug=False,
-                            sync_global_commands=False,
-                            sync_guild_commands=False
+                            allow_command_deletion=sync_cfg,
+                            sync_commands=sync_cfg,
+                            sync_commands_debug=sync_cfg,
+                            sync_global_commands=sync_cfg,
+                            sync_guild_commands=sync_cfg
                         )  
         
         bot  = ClientUser(intents=intents, command_prefix="?", command_sync_flag=command_sync_config)
