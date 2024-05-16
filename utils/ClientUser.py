@@ -34,6 +34,14 @@ class LoadBot:
         bot  = ClientUser(intents=intents, command_prefix="?", command_sync_flag=command_sync_config)
         
         
+        activity = disnake.Activity(
+                        type=disnake.ActivityType.watching,
+                        name="Guild log",
+                    )
+        
+        bot.change_presence(activity=activity)
+        
+        
         
         bot.load_modules()
         print("-"*40)
