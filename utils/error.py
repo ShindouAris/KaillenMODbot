@@ -4,9 +4,17 @@ from typing import Union
 from utils.conv import *
 from pymongo.errors import ServerSelectionTimeoutError
 import traceback
+from typing import Optional
 
 class ClientException(commands.CheckFailure):
     pass
+
+class GenericError(commands.CheckFailure):
+
+    def __init__(self, text: str, *, self_delete: int = None, delete_original: Optional[int] = None, components: list = None):
+        self.text = text
+        self.self_delete = self_delete
+        self.delete_original = delete_original
 
 def parse_error(
         ctx: Union[disnake.ApplicationCommandInteraction, commands.Context, disnake.MessageInteraction],
@@ -36,12 +44,9 @@ def parse_error(
             if remaing < 1:
                 remaing = 1
             error_txt = "**Bạn phải đợi {} mới có thể sử dụng lệnh này.**".format(time_format(int(remaing) * 1000, use_names=True))
-    
-    if not error_txt:
-        full_error_txt = "".join(traceback.format_exception(type(error), error, error.__traceback__))
-        print(full_error_txt)
-    else:
-        full_error_txt = ""
+            
+    if isinstance(error, GenericError):
+        error_txt = error.text
         
     return error_txt
 
