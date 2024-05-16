@@ -34,12 +34,7 @@ class LoadBot:
         bot  = ClientUser(intents=intents, command_prefix="?", command_sync_flag=command_sync_config)
         
         
-        activity = disnake.Activity(
-                        type=disnake.ActivityType.watching,
-                        name="Guild log",
-                    )
         
-        bot.change_presence(activity=activity)
         
         
         
@@ -67,11 +62,23 @@ class ClientUser(commands.AutoShardedBot):
     
     async def on_ready(self):
             print("-"*40)
-            await self.serverdb.connect()
             print('Logged in as')
             print(self.user.name)
             print(self.user.id)
             print('-'*40)
+            await self.process_rpc()
+            if not os.environ.get("MONGOSERVER"):
+                print(f"{Fore.RED}[ ❌ ] [MongoDB] No Database connected, abort")
+                return
+            await self.serverdb.connect()
+            
+    async def process_rpc(self):
+        activity = disnake.Activity(
+                        type=disnake.ActivityType.watching,
+                        name="Guild log",
+                    )
+        
+        await ClientUser.change_presence(self, activity=activity)
     
 
     def load_modules(self):
