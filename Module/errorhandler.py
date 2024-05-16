@@ -1,12 +1,10 @@
 import disnake
 from disnake.ext import commands
-from pymongo.errors import ServerSelectionTimeoutError
 
 from utils.ClientUser import ClientUser
-from utils.conv import time_format, perms_translations
 from utils.error import ClientException, parse_error, paginator, send_message
 import traceback
-
+from typing import Union
 
 
 class HandleError(commands.Cog):
@@ -54,34 +52,70 @@ class HandleError(commands.Cog):
             traceback.print_exc()
         
     @commands.Cog.listener("on_command_error")
-    async def prefix_command_handle(self, ctx: disnake.AppCommandInter, error: Exception):
+    async def prefix_command_handle(self, ctx: Union[disnake.AppCommandInter, commands.Context], error: Exception):
         
         if isinstance(error, commands.CommandNotFound):
             return
         
-        error_txt = ""
-        
         if isinstance(error, commands.NotOwner):
-            error_txt = "**Chỉ nhà phát triển của tôi mới có thể sử dụng lệnh này**"
+            print(f"{ctx.author} [{ctx.author.id}] không sở hữu bot để sử dụng: {ctx.command.name}")
+            return
 
-        if isinstance(error, commands.BotMissingPermissions):
-            error_txt = "Tôi không có các quyền sau để thực thi lệnh này: ```\n{}```" \
-                .format(", ".join(perms_translations.get(perm, perm) for perm in error.missing_permissions))
+        if isinstance(error, commands.MissingPermissions) and (await ctx.bot.is_owner(ctx.author)):
+            try:
+                await ctx.reinvoke()
+            except Exception as e:
+                await self.on_legacy_command_error(ctx, e)
+            return
 
-        if isinstance(error, commands.MissingPermissions):
-            error_txt = "Bạn không có các quyền sau để thực hiện lệnh này: ```\n{}```" \
-                .format(", ".join(perms_translations.get(perm, perm) for perm in error.missing_permissions))
-                
-        if isinstance(error, commands.NoPrivateMessage):
-            error_txt = "Lệnh này không thể chạy trên tin nhắn riêng tư."
+        error_msg = parse_error(ctx, error)
+        kwargs = {"content": ""}
+       
+        if not error_msg:
+
+            if ctx.channel.permissions_for(ctx.guild.me).embed_links:
+                kwargs["embed"] = disnake.Embed(
+                    color=disnake.Colour.red(),
+                    title="Đã có một sự cố đã xảy ra:",
+                    description=f"```py\n{repr(error)[:2030].replace(self.bot.http.token, 'mytoken')}```"
+                ).set_thumbnail(url="https://cdn.discordapp.com/attachments/1172052818501308427/1176426375704498257/1049220311318540338.png?ex=656ed370&is=655c5e70&hm=11d80b14a3ca28d04f7ac48d3a39b0c6d5947d20c9ae78cee9a4e511ce65f301&")
+
+            else:
+                kwargs["content"] += "\n**Đã có một sự cố đã xảy ra:**\n" \
+                                     f"```py\n{repr(error)[:2030].replace(self.bot.http.token, 'mytoken')}```"
+
+        else:
+
+            if ctx.channel.permissions_for(ctx.guild.me).embed_links:
+                kwargs["embed"] = disnake.Embed(color=disnake.Colour.red(), description=error_msg)
+            else:
+                kwargs["content"] += f"\n{error_msg}"
+
+        try:
+            kwargs["delete_after"] = error.delete_original
+        except AttributeError:
+            pass
+
+        try:
+            if error.self_delete and ctx.channel.permissions_for(ctx.guild.me).manage_messages:
+                await ctx.message.delete()
+        except:
+            pass
+
+        if hasattr(ctx, "inter"):
+            if ctx.inter.response.is_done():
+                func = ctx.inter.edit_original_message
+            else:
+                func = ctx.inter.response.edit_message
+                kwargs.pop("delete_after", None)
+        else:
+            try:
+                func = ctx.store_message.edit
+            except:
+                func = ctx.send
+
+        await func(**kwargs)
         
-        if isinstance(error, commands.CommandOnCooldown):
-            remaing = int(error.retry_after)
-            if remaing < 1:
-                remaing = 1
-            error_txt = "**Bạn phải đợi {} mới có thể sử dụng lệnh này.**".format(time_format(int(remaing) * 1000, use_names=True))
-            
-        await ctx.send(error_txt)
             
 def setup(bot: ClientUser):
     bot.add_cog(HandleError(bot))
