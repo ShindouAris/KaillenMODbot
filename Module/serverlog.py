@@ -20,10 +20,9 @@ class Serverlog(commands.Cog):
     @commands.has_guild_permissions(manage_guild=True, manage_channels=True)
     @commands.slash_command(name="serverlog", description=f"{desc_prefix}Set the serverlog channel", options=[Option("channel", "The channel to set the serverlog to", OptionType.channel, required=True)])
     async def serverlog(self, ctx: Union[commands.Context, ApplicationCommandInteraction], channel: disnake.TextChannel):
+        await ctx.response.defer()
         check = await self.bot.serverdb.check_database(ctx.guild.id)
         if check["status"] == "No_Data":    
-                    if isinstance(ctx, ApplicationCommandInteraction):
-                        await ctx.response.defer()
                     await self.bot.serverdb.setupserverlog(ctx.guild.id, channel.id)
                     embed = disnake.Embed(title="Server Log", description=f"<:verify:1134033164151566460> Đã kích hoạt server log cho máy chủ {ctx.author.guild.name}\nKênh đã thiết lập: {channel.mention}")
                     embed.set_thumbnail(url="https://media.discordapp.net/stickers/1039992459209490513.png")
@@ -31,8 +30,6 @@ class Serverlog(commands.Cog):
                                      icon_url=ctx.author.avatar.url)
                     await ctx.edit_original_response(embed=embed)
         elif check["status"] == "Data_Found":
-                    if isinstance(ctx, ApplicationCommandInteraction):
-                        await ctx.response.defer()
                     if check["channel_id"] == channel.id:
                         remove = await self.bot.serverdb.remove_server_log(ctx.guild_id, channel.id)
                         if remove["status"] == "failed":
@@ -47,7 +44,7 @@ class Serverlog(commands.Cog):
                         embed.set_thumbnail("https://media.discordapp.net/stickers/1039992459209490513.png")
                         embed.set_footer(text=f"Thiết lập bởi {ctx.author.name} - {ctx.author.id}", 
                                         icon_url=ctx.author.avatar.url)
-                        await ctx.send(embed=embed)
+                        await ctx.edit_original_response(embed=embed)
 
     @commands.cooldown(1, 300, commands.BucketType.guild) 
     @commands.has_guild_permissions(manage_roles=True, manage_guild=True)
