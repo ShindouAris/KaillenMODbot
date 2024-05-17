@@ -63,7 +63,7 @@ perms_translations = {
     "manage_guild": "Quản lý máy chủ",
     "manage_messages": "Quản lý tin nhắn",
     "manage_nicknames": "Quản lý biệt danh",
-    "manage_roles": "Quản lý vị trí",
+    "manage_roles": "Quản lý vai trò",
     "manage_threads": "Quản lý các chủ đề",
     "manage_webhooks": "Quản lý webhooks",
     "mention_everyone": "Đề cập @everyone và @here",
