@@ -18,6 +18,7 @@ class Serverlog(commands.Cog):
     
     @commands.cooldown(1, 300, commands.BucketType.guild) 
     @commands.has_guild_permissions(manage_guild=True, manage_channels=True)
+    @commands.bot_has_guild_permissions(send_messages=True, read_message_history=True)
     @commands.slash_command(name="serverlog", description=f"{desc_prefix}Set the serverlog channel", options=[Option("channel", "The channel to set the serverlog to", OptionType.channel, required=True)])
     async def serverlog(self, ctx: Union[commands.Context, ApplicationCommandInteraction], channel: disnake.TextChannel):
         await ctx.response.defer()
