@@ -14,12 +14,12 @@ class ONUNBAN(commands.Cog):
     async def on_member_unban(self, guild: disnake.Guild, user: disnake.User):
 
 
-        data = await self.client.serverdb.get_log_channel(guild.id)
+        data = await self.client.serverdb.get_webhook(guild.id)
 
         if data is None:
             return
         try:
-            channel = guild.get_channel(data["channel_id"]) # How tf i can forget this
+            channel = data["webhook_uri"]
         except KeyError:
             return
 
@@ -30,7 +30,7 @@ class ONUNBAN(commands.Cog):
             timestamp=datetime.now(HCM),
         )
 
-        await channel.send(embed=embed)
+        await self.client.webhook_utils.process_webhook(channel, embed)
 
 def setup(client: BotCore):
     client.add_cog(ONUNBAN(client))

@@ -6,12 +6,20 @@ from colorama import *
 from disnake.ext import commands
 from utils.server.server import Server  
 from dotenv import load_dotenv
+from utils.server.process_webhook import Process_webhook
+import logging
 
 load_dotenv()
 
+FORMAT = '%(asctime)s %(message)s'
+
+logger = logging.getLogger(__name__)
 class LoadBot:
     
+    
     def load(self):
+        logging.basicConfig(filename="BotDebug.log", level=logging.INFO, format=FORMAT)
+        logger.info("Booting Client....")
         
         DISCORD_TOKEN = os.environ.get("TOKEN")
         
@@ -49,7 +57,7 @@ class LoadBot:
             bot.run(DISCORD_TOKEN)
         except Exception as e:
             if  "LoginFailure" in str(e):
-                print(f"Đăng nhập thất bại: {repr(e)}")
+                logger.error("An Error occured:", repr(e))
 
         
 
@@ -57,8 +65,10 @@ class ClientUser(commands.AutoShardedBot):
     
     def __init__(self, *args, intents, command_sync_flag, command_prefix: str, **kwargs) -> None:
         super().__init__(*args, **kwargs, intents=intents, command_sync_flags=command_sync_flag, command_prefix=command_prefix)
+        self.uptime = disnake.utils.utcnow()
         self.serverdb = Server()
         self.db =None
+        self.webhook_utils = Process_webhook()
     
     
     async def on_ready(self):

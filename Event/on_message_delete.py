@@ -24,12 +24,12 @@ class OnMessageDelete(commands.Cog):
             pass
 
         
-        data = await self.client.serverdb.get_log_channel(message.guild.id)
+        data = await self.client.serverdb.get_webhook(message.guild.id)
 
         if data is None:
             return
         try:
-            channel = self.client.get_channel(data["channel_id"])
+            channel = data["webhook_uri"]
         except KeyError:
             return  # Ignore if channel is None
         
@@ -57,7 +57,7 @@ class OnMessageDelete(commands.Cog):
             embed.add_field(name="Tin nhắn", value=message.content, inline=False)
         
 
-        await channel.send(embed=embed)
+        await self.client.webhook_utils.process_webhook(channel, embed)
 
 def setup(client: BotCore):
     client.add_cog(OnMessageDelete(client))

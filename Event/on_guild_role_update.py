@@ -15,12 +15,12 @@ class OnGuildRoleUpdate(commands.Cog):
         if before.name != after.name:
 
 
-            data = await self.client.serverdb.get_log_channel(before.guild.id)
+            data = await self.client.serverdb.get_webhook(before.guild.id)
 
             if data is None:
                 return
             try:
-                channel = self.client.get_channel(data["channel_id"])
+                channel = data["webhook_uri"]
             except KeyError:
                 return
 
@@ -34,7 +34,7 @@ class OnGuildRoleUpdate(commands.Cog):
             embed.add_field(name="Trước đó", value=before.name, inline=False)
             embed.add_field(name="Sau khi cập nhật", value=after.name, inline=False)
 
-            await channel.send(embed=embed)
+            await self.client.webhook_utils.process_webhook(channel, embed)
 
 def setup(client: ClientUser):
     client.add_cog(OnGuildRoleUpdate(client))

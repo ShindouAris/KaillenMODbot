@@ -15,16 +15,13 @@ class OnGuildChannelUpdate(commands.Cog):
         if before.name.startswith("ticket"): #! Ingore ticket channel
             return
         if before.name != after.name:
-
-        
-
-            data = await self.client.serverdb.get_log_channel(before.guild.id)
+            data = await self.client.serverdb.get_webhook(before.guild.id)
 
             if data is None:
                 return
 
             try:
-                channel = self.client.get_channel(data["channel_id"])
+                channel = data["webhook_uri"]
             except KeyError:
                 return
 
@@ -38,34 +35,7 @@ class OnGuildChannelUpdate(commands.Cog):
             embed.add_field(name="Trước đó", value=before.name, inline=False)
             embed.add_field(name="Sau khi cập nhật", value=after.name, inline=False)
 
-            await channel.send(embed=embed)
-        try:
-            if before.topic != after.topic:
-                if before.topic == None and after.topic == " ":
-                    return # -*- ? -*-
-                data = await self.client.serverdb.get_log_channel(before.guild.id)
-
-                if data is None:
-                    return
-
-                try:
-                    channel = self.client.get_channel(data["channel_id"])
-                except KeyError:
-                    return
-
-                embed = disnake.Embed(
-                    title="Cập nhật kênh",
-                    description=f"{before.mention} đã thay đổi",
-                    color=disnake.Color.red(),
-                    timestamp=datetime.now(HCM),
-                )
-
-                embed.add_field(name="Trước đó", value=before.topic, inline=False)
-                embed.add_field(name="Sau khi cập nhật", value=after.topic, inline=False)
-
-                await channel.send(embed=embed)
-        except AttributeError:
-            pass
+            await self.client.webhook_utils.process_webhook(channel, embed)
 
 def setup(client: ClientUser):
     client.add_cog(OnGuildChannelUpdate(client))

@@ -3,11 +3,16 @@ from disnake.ext import commands
 from typing import Union
 from utils.conv import *
 from pymongo.errors import ServerSelectionTimeoutError
-import traceback
+from disnake.utils import escape_mentions
 from typing import Optional
+
 
 class ClientException(commands.CheckFailure):
     pass
+
+class ArgumentParsingError(commands.CommandError):
+    def __init__(self, message):
+        super().__init__(escape_mentions(message))
 
 class GenericError(commands.CheckFailure):
 

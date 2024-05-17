@@ -17,13 +17,13 @@ class OnGuildChannelDelete(commands.Cog):
             return
 
 
-        data = await self.client.serverdb.get_log_channel(channel.guild.id)
+        data = await self.client.serverdb.get_webhook(channel.guild.id)
 
         if data is None:
             return
 
         try:
-            logchannel = self.client.get_channel(data["channel_id"])
+            logchannel = data["webhook_uri"]
         except KeyError:
             return
         
@@ -34,7 +34,8 @@ class OnGuildChannelDelete(commands.Cog):
             timestamp=datetime.now(HCM),
         )
 
-        await logchannel.send(embed=embed)
+        # await logchannel.send(embed=embed)
+        await self.client.webhook_utils.process_webhook(logchannel, embed)
 
 def setup(client: ClientUser):
     client.add_cog(OnGuildChannelDelete(client))

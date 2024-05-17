@@ -14,23 +14,23 @@ class OnGuildRoleCreate(commands.Cog):
     async def on_guild_role_create(self, role: disnake.Role): 
   
 
-        data = await self.client.serverdb.get_log_channel(role.guild.id)
+        data = await self.client.serverdb.get_webhook(role.guild.id)
 
         if data is None:
             return
         try:
-            channel = self.client.get_channel(data["channel_id"])
+            channel = data["webhook_uri"]
         except KeyError:
             return
         
         embed = disnake.Embed(
             title="Vai trò được tạo ra",
-            description=f"{role.name} was created",
+            description=f"{role.name} đã được tạo",
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )
 
-        await channel.send(embed=embed)
+        await self.client.webhook_utils.process_webhook(channel, embed)
 
 def setup(client: ClientUser):
     client.add_cog(OnGuildRoleCreate(client))

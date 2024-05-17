@@ -25,12 +25,12 @@ class OnMessageEdit(commands.Cog):
         if before.content == after.content:
             return #! Ignore if the message is the same
 
-        data = await self.client.serverdb.get_log_channel(before.guild.id)
+        data = await self.client.serverdb.get_webhook(before.guild.id)
 
         if data is None:
             return
         try:
-            channel = before.guild.get_channel(data["channel_id"])
+            channel = data["webhook_uri"]
         except KeyError:
             return
 
@@ -44,7 +44,7 @@ class OnMessageEdit(commands.Cog):
         embed.add_field(name="Trước đó", value=before.content, inline=False)
         embed.add_field(name="Sau khi cập nhật", value=after.content, inline=False)
 
-        await channel.send(embed=embed)
+        await self.client.webhook_utils.process_webhook(channel, embed)
 
 def setup(client: BotCore):
     client.add_cog(OnMessageEdit(client))

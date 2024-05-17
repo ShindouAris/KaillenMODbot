@@ -86,7 +86,7 @@ class Server():
         if not data:
             return {"status": "No_Data"}
         else:
-            return {"status": "Data_Found", "channel_id": data["channel_id"]}
+            return {"status": "Data_Found", "webhook_uri": data["webhook_uri"]}
         
     async def check_server_db(self, guild_id: int):
         data = await s2a(self.servers.find_one)({"guild_id": guild_id})
@@ -119,7 +119,7 @@ class Server():
                 "role_id": data["role_id"]
             }
     
-    async def get_log_channel(self, guild_id: int):
+    async def get_webhook(self, guild_id: int):
         data = await s2a(self.servers.find_one)({"guild_id": guild_id})
         if data is None:
             return {
@@ -128,13 +128,13 @@ class Server():
         else:
             return {
                 "status": "Data_Found",
-                "channel_id": data["channel_id"]
+                "webhook_uri": data["webhook_uri"]
             }
         
-    async def setupserverlog(self, guild_id: int, channel_id: int):
+    async def setupserverlog(self, guild_id: int, webhook_uri: str):
         data = await s2a(self.servers.find_one)({"guild_id": guild_id})
         if data is None:
-            await s2a(self.servers.insert_one)({"guild_id": guild_id, "channel_id": channel_id})
+            await s2a(self.servers.insert_one)({"guild_id": guild_id, "webhook_uri": webhook_uri})
             return {
                 "status": "success"
             }
@@ -143,9 +143,9 @@ class Server():
                 "status": "error"
             }
     
-    async def remove_server_log(self, guild_id: int, channel_id: int):
+    async def remove_server_log(self, guild_id: int, webhook_uri: str):
         try:
-            await s2a(self.servers.delete_one)({"guild_id": guild_id, "channel_id": channel_id})
+            await s2a(self.servers.delete_one)({"guild_id": guild_id, "webhook_uri": webhook_uri})
             return {
                 "status": "success"
             }

@@ -18,28 +18,29 @@ class Serverlog(commands.Cog):
     
     @commands.cooldown(1, 300, commands.BucketType.guild) 
     @commands.has_guild_permissions(manage_guild=True, manage_channels=True)
-    @commands.bot_has_guild_permissions(send_messages=True, read_message_history=True)
+    @commands.bot_has_guild_permissions(send_messages=True, read_message_history=True, manage_webhooks=True)
     @commands.slash_command(name="serverlog", description=f"{desc_prefix}Set the serverlog channel", options=[Option("channel", "The channel to set the serverlog to", OptionType.channel, required=True)])
     async def serverlog(self, ctx: Union[commands.Context, ApplicationCommandInteraction], channel: disnake.TextChannel):
         await ctx.response.defer()
         check = await self.bot.serverdb.check_database(ctx.guild.id)
-        if check["status"] == "No_Data":    
-                    await self.bot.serverdb.setupserverlog(ctx.guild.id, channel.id)
+        if check["status"] == "No_Data":    #! KHÔNG CÓ DỮ LIỆU
+                    webhook = await channel.create_webhook(name="Kaillen Log")
+                    await self.bot.serverdb.setupserverlog(ctx.guild.id, webhook.url)
                     embed = disnake.Embed(title="Server Log", description=f"<:verify:1134033164151566460> Đã kích hoạt server log cho máy chủ {ctx.author.guild.name}\nKênh đã thiết lập: {channel.mention}")
                     embed.set_thumbnail(url="https://media.discordapp.net/stickers/1039992459209490513.png")
                     embed.set_footer(text=f"Thiết lập bởi {ctx.author.name} - {ctx.author.id}", 
                                      icon_url=ctx.author.avatar.url)
                     await ctx.edit_original_response(embed=embed)
-        elif check["status"] == "Data_Found":
-                    if check["channel_id"] == channel.id:
-                        remove = await self.bot.serverdb.remove_server_log(ctx.guild_id, channel.id)
+        elif check["status"] == "Data_Found": #* CÓ DỮ LIỆU
+                    test = await self.bot.webhook_utils.search_webhook(check["webhook_uri"]) #* Trả lại channel id của webhook đó
+                    if test == channel.id: #* Nếu ChannelID trùng với kênh đã chọn thì xóa dữ liệu 
+                        remove = await self.bot.serverdb.remove_server_log(ctx.guild_id, check["webhook_uri"])
                         if remove["status"] == "failed":
                             await ctx.send("Đã xảy ra lỗi", delete_after=5)
-                        await ctx.edit_original_response("Đã xóa dữ liệu", delete_after=5)
-                        
-                    else:
-                        old_channel_id = await self.bot.serverdb.get_log_channel(ctx.guild_id)
-                        await self.bot.serverdb.remove_server_log(ctx.guild_id, old_channel_id["channel_id"])
+                        await ctx.edit_original_response("Đã xóa dữ liệu", delete_after=5)   
+                    else: #* Không thì xóa dữ liệu cũ và tạo lại
+                        old_channel_webhook = await self.bot.serverdb.get_webhook(ctx.guild_id)
+                        await self.bot.serverdb.remove_server_log(ctx.guild_id, old_channel_webhook["webhook_uri"])
                         await self.bot.serverdb.setupserverlog(ctx.guild.id, channel.id)
                         embed = disnake.Embed(title="Server Log", description=f"<:verify:1134033164151566460> Đã thay đổi kênh server log cho máy chủ {ctx.author.guild.name}\nKênh đã thiết lập: {channel.mention}")
                         embed.set_thumbnail("https://media.discordapp.net/stickers/1039992459209490513.png")

@@ -17,23 +17,23 @@ class OnGuildRoleDelete(commands.Cog):
         guild_id = role.guild.id
 
         
-        data = await self.client.serverdb.get_log_channel(guild_id)
+        data = await self.client.serverdb.get_webhook(guild_id)
 
         if data is None:
             return
         try:
-            channel = self.client.get_channel(data["channel_id"])
+            channel = data["webhook_uri"]
         except KeyError:
             return
 
         embed = disnake.Embed(
             title="Vai trò đã xóa",
-            description=f"{role.name} was deleted",
+            description=f"{role.name} đã bị xóa",
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )
 
-        await channel.send(embed=embed)
+        await self.client.webhook_utils.process_webhook(channel, embed)
 
 def setup(client: ClientUser):
     client.add_cog(OnGuildRoleDelete(client))
