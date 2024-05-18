@@ -47,6 +47,32 @@ class HandleError(commands.Cog):
 
         try:
             await send_message(ctx, **kwargs)
+            
+        except ValueError:
+            error_msg = parse_error(ctx, error)
+        
+            if isinstance(error, disnake.NotFound) and str(error).endswith("Unknown Interaction"):
+                return
+            
+            kwargs = {"text": ""}
+            color = disnake.Color.red()
+
+            if not error_msg:
+
+                kwargs["embed"] = disnake.Embed(
+                    color=color,
+                    title = "Đã có một sự cố xảy ra, nhưng đó không phải lỗi của bạn:",
+                    description=f"```py\n{repr(error)[:2030].replace(self.bot.http.token, 'mytoken')}```"
+                )
+            else:
+
+                kwargs["embed"] = []
+
+                for p in paginator(error_msg):
+                    kwargs["embed"].append(disnake.Embed(color=color, description=p))
+                    
+            await send_message(ctx, **kwargs)
+            
         except:
             print(("-"*50) + f"\n{error_msg}\n" + ("-"*50))
             traceback.print_exc()
