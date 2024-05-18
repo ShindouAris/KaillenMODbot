@@ -56,30 +56,6 @@ class Server():
             "info": False,
             "data": "None"
         }
-    
-    async def check_premium(self, guild: int):
-        data = await s2a(self.is_premium.find_one)({"guild_id": guild})
-        try:
-            if data is None:
-                return {
-                    "info": False,
-                    "data": "None"
-                }
-            elif data["is_premium"] == 1:
-                return {
-                    "info": True,
-                    "data": data["is_premium"]
-                }
-            elif data["is_premium"] == 0:
-                return {
-                    "info": False,
-                    "data": data["is_premium"]
-                }
-        except errors.ServerSelectionTimeoutError as e:
-            return {
-                "info": False,
-                "data": e
-            }
         
     async def check_database(self, guild):
         data = await s2a(self.servers.find_one)({"guild_id": guild})
