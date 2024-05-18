@@ -72,6 +72,7 @@ class HandleError(commands.Cog):
                     kwargs["embed"].append(disnake.Embed(color=color, description=p))
                     
             await send_message(ctx, **kwargs)
+            traceback.print_exc()
             
         except:
             print(("-"*50) + f"\n{error_msg}\n" + ("-"*50))
