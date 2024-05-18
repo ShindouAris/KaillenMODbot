@@ -18,7 +18,7 @@ class LoadBot:
     
     
     def load(self):
-        logging.basicConfig(filename="BotDebug.log", level=logging.INFO, format=FORMAT)
+        logging.basicConfig(level=logging.INFO, format=FORMAT)
         logger.info("Booting Client....")
         
         DISCORD_TOKEN = os.environ.get("TOKEN")
