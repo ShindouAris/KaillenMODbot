@@ -12,13 +12,16 @@ class GuildEntry(commands.Cog):
 
         print(f"Bị xóa khỏi máy chủ: {guild.name} - [{guild.id}]")
         
-        data = self.client.serverdb.get_webhook(guild.id)
+        data = await self.client.serverdb.get_webhook(guild.id)
         
         if data["status"] == "No_Data":
             return
         
         guild_webhook = data["webhook_uri"]
         
-        await self.client.serverdb.remove_server_log(guild.id, guild_webhook)
+        try:
+            await self.client.serverdb.remove_server_log(guild.id, guild_webhook)
+        except Exception:
+            ...
 
 def setup(bot: ClientUser): bot.add_cog(GuildEntry(bot))

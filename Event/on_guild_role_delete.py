@@ -32,8 +32,10 @@ class OnGuildRoleDelete(commands.Cog):
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )
-
-        await self.client.webhook_utils.process_webhook(channel, embed)
+        try:
+            await self.client.webhook_utils.process_webhook(channel, embed)
+        except (disnake.NotFound, AttributeError):
+            ...
 
 def setup(client: ClientUser):
     client.add_cog(OnGuildRoleDelete(client))
