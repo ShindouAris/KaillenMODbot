@@ -11,7 +11,6 @@ class GuildEntry(commands.Cog):
     async def on_guild_remove(self, guild: disnake.Guild):
 
         print(f"Bị xóa khỏi máy chủ: {guild.name} - [{guild.id}]")
-        
         data = await self.client.serverdb.get_webhook(guild.id)
         
         if data["status"] == "No_Data":
@@ -21,6 +20,7 @@ class GuildEntry(commands.Cog):
         
         try:
             await self.client.serverdb.remove_server_log(guild.id, guild_webhook)
+            await self.client.serverdb.remove_ignored_role_data(guild.id)
         except Exception:
             ...
 

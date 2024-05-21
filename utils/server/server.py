@@ -15,14 +15,35 @@ class Server():
         self.client = MongoClient(serveruri)
         self.servers = self.client.db.servers
         self.ignored_roles = self.client.db.ignored_roles
-        self.join_channel = self.client.db.join_channel
-        self.leave_channel = self.client.db.leave_channel
-        self.auto_role = self.client.db.auto_role
-        self.is_premium = self.client.db.is_premium
-        self.warn_log = self.client.db.warn_log
-        self.servercfg = self.client.db.servercfg
-        self.id_tk = self.client.db.id_tk
+        self.language = self.client.db.language
         print(f"{Fore.GREEN}[ ✅ ] [MongoDB] Connected to Server Database")
+
+
+    async def guild_language(self, guild_id: int):
+        data = await s2a(self.language.find_one)({"guild_id": guild_id})
+        if data is None:
+            return {
+                "status": "NoData", "language": "vi"
+            }
+        else:
+            return {"status": "DataFound", "language": data["language"]}
+        
+    async def func_language(self, guild_id, language):
+        try:
+            await s2a(self.language.insert_one)({"guild_id": guild_id, "language": language})
+            return {"status": "Done", "msg": "Đã cài đặt thành công"}
+        except Exception as e:
+            return {
+                "status": "Failed", "msg": f"Đã xảy ra lỗi {e}"
+            }
+            
+    async def replace_language(self, guild_id: int, language: str):
+        try:
+            await s2a(self.language.update_one)({"guild_id": guild_id}, {"$set": {"language": language}})
+            return {"status": "OK", "msg": "Đã cập nhật thành công"}
+        except Exception as e:
+            return {"status": "Failed", "msg": e}
+
 
     async def check_role(self ,guild: int, role_id: int):
         data = await s2a(self.ignored_roles.find_one)({"guild_id": guild, "role_id": role_id})
@@ -70,18 +91,6 @@ class Server():
             return False
         else:
             return True
-    
-    async def get_auto_role(self, guild_id: int):
-        data = await s2a(self.auto_role.find_one)({"guild_id": guild_id})
-        if data is None:
-            return {
-                "status": "No_Data"
-            }
-        else:
-            return {
-                "status": "Data_Found",
-                "role_id": data["role_id"]
-            }
         
     async def get_ignored_roles(self, guild_id: int):
         data = await s2a(self.ignored_roles.find)({"guild_id": guild_id})
@@ -145,3 +154,20 @@ class Server():
                 "status": "success",
                 "action": "delete"
             }    
+            
+    async def remove_ignored_role_data(self, guild_id: int):
+        data = await self.get_ignored_roles(guild_id)
+        if data["status"] == "No_data":
+            return {
+                "status": "no_data"
+            }
+        try:
+            await s2a(self.ignored_roles.delete_many)({"guild_id": guild_id})
+            return {
+                "status": "done"
+            }
+        except Exception as e:
+            return {
+                "status": "failed",
+                "msg": f"Đã xảy ra lỗi: {e}"
+            }

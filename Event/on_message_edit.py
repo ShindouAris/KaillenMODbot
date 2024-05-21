@@ -24,6 +24,7 @@ class OnMessageEdit(commands.Cog):
             pass
         if before.content == after.content:
             return #! Ignore if the message is the same
+        language = await self.client.serverdb.guild_language(before.guild.id)
 
         data = await self.client.serverdb.get_webhook(before.guild.id)
 
@@ -35,14 +36,14 @@ class OnMessageEdit(commands.Cog):
             return
 
         embed = disnake.Embed(
-            title="Đã chỉnh sửa tin nhắn",
-            description=f"Tin nhắn được gửi bởi {before.author.mention} chỉnh sửa trong {before.channel.mention}",
+            title=self.client.handle_language.get(language["language"], "message_edit"),
+            description=self.client.handle_language.get(language["language"], "message_edit_msg").format(mention_author=before.author.mention, channel=before.channel.mention),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )
 
-        embed.add_field(name="Trước đó", value=before.content, inline=False)
-        embed.add_field(name="Sau khi cập nhật", value=after.content, inline=False)
+        embed.add_field(name=self.client.handle_language.get(language["language"], "before"), value=before.content, inline=False)
+        embed.add_field(name=self.client.handle_language.get(language["language"], "after"), value=after.content, inline=False)
 
         await self.client.webhook_utils.process_webhook(channel, embed)
 

@@ -15,15 +15,20 @@ class HandleError(commands.Cog):
     @commands.Cog.listener('on_message_command_error')
     @commands.Cog.listener('on_slash_command_error')
     async def on_interaction_command_error(self, inter: disnake.AppCmdInter, error: Exception):
+        language = await self.bot.serverdb.guild_language(inter.guild_id)
 
-        await self.hander_error_cmd(ctx=inter, error=error)
+        await self.hander_error_cmd(ctx=inter, error=error, language=language["language"])
     
-    async def hander_error_cmd(self, ctx: disnake.ApplicationCommandInteraction, error: Exception):        
+    async def hander_error_cmd(self, ctx: disnake.ApplicationCommandInteraction, error: Exception, language: str = "vi"):        
         
         if isinstance(error, ClientException):
             return
         
-        error_msg = parse_error(ctx, error)
+        
+        language = await self.bot.serverdb.guild_language(ctx.guild_id)
+        title_txt = await self.bot.handle_language.get(language["language"], 'error_title')
+        
+        error_msg, full_error_msg = parse_error(ctx, error, language["language"])
         
         if isinstance(error, disnake.NotFound) and str(error).endswith("Unknown Interaction"):
             return
@@ -35,7 +40,7 @@ class HandleError(commands.Cog):
 
             kwargs["embeds"] = disnake.Embed(
                 color=color,
-                title = "Đã có một sự cố xảy ra, nhưng đó không phải lỗi của bạn:",
+                title = title_txt,
                 description=f"```py\n{repr(error)[:2030].replace(self.bot.http.token, 'mytoken')}```"
             )
         else:
@@ -47,9 +52,10 @@ class HandleError(commands.Cog):
 
         try:
             await send_message(ctx, **kwargs)
+            print(full_error_msg)
             
         except ValueError:
-            error_msg = parse_error(ctx, error)
+            error_msg, full_error_msg = parse_error(ctx, error, language)
         
             if isinstance(error, disnake.NotFound) and str(error).endswith("Unknown Interaction"):
                 return
@@ -61,7 +67,7 @@ class HandleError(commands.Cog):
 
                 kwargs["embed"] = disnake.Embed(
                     color=color,
-                    title = "Đã có một sự cố xảy ra, nhưng đó không phải lỗi của bạn:",
+                    title = title_txt,
                     description=f"```py\n{repr(error)[:2030].replace(self.bot.http.token, 'mytoken')}```"
                 )
             else:
@@ -72,11 +78,12 @@ class HandleError(commands.Cog):
                     kwargs["embed"].append(disnake.Embed(color=color, description=p))
                     
             await send_message(ctx, **kwargs)
-            traceback.print_exc()
+            print(full_error_msg)
             
         except:
             print(("-"*50) + f"\n{error_msg}\n" + ("-"*50))
             traceback.print_exc()
+            print(full_error_msg)
         
     @commands.Cog.listener("on_command_error")
     async def prefix_command_handle(self, ctx: Union[disnake.AppCommandInter, commands.Context], error: Exception):
@@ -94,6 +101,9 @@ class HandleError(commands.Cog):
             except Exception as e:
                 await self.on_legacy_command_error(ctx, e)
             return
+        
+        language = await self.bot.serverdb.guild_language(ctx.guild_id)
+        title_txt = await self.bot.handle_language.get(language["language"], 'error_title')
 
         error_msg = parse_error(ctx, error)
         kwargs = {"content": ""}
@@ -103,13 +113,12 @@ class HandleError(commands.Cog):
             if ctx.channel.permissions_for(ctx.guild.me).embed_links:
                 kwargs["embed"] = disnake.Embed(
                     color=disnake.Colour.red(),
-                    title="Đã có một sự cố đã xảy ra:",
+                    title=title_txt,
                     description=f"```py\n{repr(error)[:2030].replace(self.bot.http.token, 'mytoken')}```"
                 ).set_thumbnail(url="https://cdn.discordapp.com/attachments/1172052818501308427/1176426375704498257/1049220311318540338.png?ex=656ed370&is=655c5e70&hm=11d80b14a3ca28d04f7ac48d3a39b0c6d5947d20c9ae78cee9a4e511ce65f301&")
 
             else:
-                kwargs["content"] += "\n**Đã có một sự cố đã xảy ra:**\n" \
-                                     f"```py\n{repr(error)[:2030].replace(self.bot.http.token, 'mytoken')}```"
+                kwargs["content"] += f"\n{title_txt}\n ```py\n{repr(error)[:2030].replace(self.bot.http.token, 'mytoken')}```"
 
         else:
 

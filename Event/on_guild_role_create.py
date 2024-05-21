@@ -15,6 +15,7 @@ class OnGuildRoleCreate(commands.Cog):
   
 
         data = await self.client.serverdb.get_webhook(role.guild.id)
+        language = await self.client.serverdb.guild_language(role.guild.id)
 
         if data is None:
             return
@@ -24,8 +25,8 @@ class OnGuildRoleCreate(commands.Cog):
             return
         
         embed = disnake.Embed(
-            title="Vai trò được tạo ra",
-            description=f"{role.name} đã được tạo",
+            title=self.client.handle_language.get(language["language"], "role_created"),
+            description=self.client.handle_language.get(language["language"], "mention_role_created").format(role = role.mention),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

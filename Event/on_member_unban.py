@@ -15,6 +15,8 @@ class ONUNBAN(commands.Cog):
 
 
         data = await self.client.serverdb.get_webhook(guild.id)
+        language = await self.client.serverdb.guild_language(guild.id)
+        
 
         if data is None:
             return
@@ -24,8 +26,8 @@ class ONUNBAN(commands.Cog):
             return
 
         embed = disnake.Embed(
-            title="Người dùng đã được bỏ cấm",
-            description=f"{user.mention} đã được bỏ cấm khỏi máy chủ",
+            title=self.client.handle_language.get(language["language"], "unban_user"),
+            description=self.client.handle_language.get(language["language"], "mention_user_unban").format(user=user.name),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

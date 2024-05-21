@@ -16,6 +16,7 @@ class OnGuildChannelDelete(commands.Cog):
         if channel.name.startswith("ticket"): #! Ingore ticket channel
             return
 
+        language = await self.client.serverdb.guild_language(channel.guild.id)
 
         data = await self.client.serverdb.get_webhook(channel.guild.id)
 
@@ -28,8 +29,8 @@ class OnGuildChannelDelete(commands.Cog):
             return
         
         embed = disnake.Embed(
-            title="Kênh đã xóa",
-            description=f"{channel.name} đã bị xóa",
+            title=self.client.handle_language.get(language["language"], "channel_deleted"),
+            description=self.client.handle_language.get(language["language"], "channel_deleted_mention").format(channel=channel.name),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

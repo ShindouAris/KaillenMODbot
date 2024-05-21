@@ -16,6 +16,7 @@ class OnGuildRoleUpdate(commands.Cog):
 
 
             data = await self.client.serverdb.get_webhook(before.guild.id)
+            language =  await self.client.serverdb.guild_language(before.guild.id)
 
             if data is None:
                 return
@@ -25,14 +26,14 @@ class OnGuildRoleUpdate(commands.Cog):
                 return
 
             embed = disnake.Embed(
-                title="Cập nhật vai trò",
-                description=f"{before.mention} đã thay đổi",
+                title=self.client.handle_language.get(language["language"], "role_updated"),
+                description=self.client.handle_language.get(language["language"], "mention_role_update").format(after.mention),
                 color=disnake.Color.red(),
                 timestamp=datetime.now(HCM),
             )
 
-            embed.add_field(name="Trước đó", value=before.name, inline=False)
-            embed.add_field(name="Sau khi cập nhật", value=after.name, inline=False)
+            embed.add_field(name=self.client.handle_language.get(language["language"], "before"), value=before.name, inline=False)
+            embed.add_field(name=self.client.handle_language.get(language["language"], "after"), value=after.name, inline=False)
 
             await self.client.webhook_utils.process_webhook(channel, embed)
 

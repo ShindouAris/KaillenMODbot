@@ -14,6 +14,8 @@ class OnGuildChannelCreate(commands.Cog):
     async def on_guild_channel_create(self, channel: disnake.TextChannel):
         if channel.name.startswith("ticket"):
             return
+        
+        language = await self.client.serverdb.guild_language(channel.guild.id)
    
 
         data = await self.client.serverdb.get_webhook(channel.guild.id)
@@ -26,8 +28,8 @@ class OnGuildChannelCreate(commands.Cog):
             return
 
         embed = disnake.Embed(
-            title="Kênh tạo ra",
-            description=f"{channel.mention} đã được tạo ra",
+            title=self.client.handle_language.get(language["language"], "channel_created"),
+            description=self.client.handle_language.get(language["language"], "channel_created_mention").format(channel = channel.mention),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

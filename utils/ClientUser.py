@@ -5,6 +5,7 @@ import disnake
 from colorama import *
 from disnake.ext import commands
 from utils.server.server import Server  
+from utils.server.language_handle import LocalizationManager
 from dotenv import load_dotenv
 from utils.server.process_webhook import Process_webhook
 import logging
@@ -40,12 +41,7 @@ class LoadBot:
                             sync_guild_commands=sync_cfg
                         )  
         
-        bot  = ClientUser(intents=intents, command_prefix="?", command_sync_flag=command_sync_config)
-        
-        
-        
-        
-        
+        bot  = ClientUser(intents=intents, command_prefix="?", command_sync_flag=command_sync_config)        
         
         bot.load_modules()
         print("-"*40)
@@ -68,6 +64,7 @@ class ClientUser(commands.AutoShardedBot):
         self.uptime = disnake.utils.utcnow()
         self.serverdb = Server()
         self.db =None
+        self.handle_language = LocalizationManager()
         self.webhook_utils = Process_webhook()
     
     

@@ -18,6 +18,7 @@ class OnGuildRoleDelete(commands.Cog):
 
         
         data = await self.client.serverdb.get_webhook(guild_id)
+        language = await self.client.serverdb.guild_language(role.guild.id)
 
         if data is None:
             return
@@ -27,8 +28,8 @@ class OnGuildRoleDelete(commands.Cog):
             return
 
         embed = disnake.Embed(
-            title="Vai trò đã xóa",
-            description=f"{role.name} đã bị xóa",
+            title=self.client.handle_language.get(language["language"], "role_deleted"),
+            description=self.client.handle_language.get(language["language"], "mention_role_deleted").format(role=role.name),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

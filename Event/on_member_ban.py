@@ -15,6 +15,7 @@ class BanEvent(commands.Cog):
  
 
         data = await self.client.serverdb.get_webhook(guild.id)
+        language = await self.client.serverdb.guild_language(guild.id)
 
         if data is None:
             return
@@ -25,8 +26,8 @@ class BanEvent(commands.Cog):
             return
 
         embed = disnake.Embed(
-            title="Thành viên bị cấm",
-            description=f"{user.mention} đã bị cấm khỏi máy chủ",
+            title=self.client.handle_language.get(language["language"], "ban_user"),
+            description=self.client.handle_language.get(language["language"], "mention_user_banned").format(user=user.name),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

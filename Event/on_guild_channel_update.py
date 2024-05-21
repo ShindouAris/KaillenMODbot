@@ -19,6 +19,8 @@ class OnGuildChannelUpdate(commands.Cog):
 
             if data is None:
                 return
+            
+            language = await self.client.serverdb.guild_language(before.guild.id)
 
             try:
                 channel = data["webhook_uri"]
@@ -26,14 +28,14 @@ class OnGuildChannelUpdate(commands.Cog):
                 return
 
             embed = disnake.Embed(
-                title="Cập nhật kênh",
-                description=f"{before.mention} đã thay đổi",
+                title=self.client.handle_language.get(language["language"], "channel_updated"),
+                description=self.client.handle_language.get(language["language"], "channel_updated_mention").format(channel=before.mention),
                 color=disnake.Color.red(),
                 timestamp=datetime.now(HCM),
             )
 
-            embed.add_field(name="Trước đó", value=before.name, inline=False)
-            embed.add_field(name="Sau khi cập nhật", value=after.name, inline=False)
+            embed.add_field(name=self.client.handle_language.get(language["language"], "before"), value=before.name, inline=False)
+            embed.add_field(name=self.client.handle_language.get(language["language"], "after"), value=after.name, inline=False)
 
             await self.client.webhook_utils.process_webhook(channel, embed)
 
