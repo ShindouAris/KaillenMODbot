@@ -73,7 +73,7 @@
     "mention_role_update": "{role} đã được cập nhật",
     "role_deleted": "Vai trò bị xóa:",
     "mention_role_deleted": "{role} đã bị xóa",
-    "role_create": "Vai trò được tạo",
+    "role_created": "Vai trò được tạo",
     "mention_role_created": "{role} đã được tạo ra",
     "channel_created": "Kênh được tạo",
     "channel_created_mention": "{channel} đã được tạo ra",
