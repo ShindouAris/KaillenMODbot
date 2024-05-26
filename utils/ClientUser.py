@@ -41,7 +41,7 @@ class LoadBot:
                             sync_guild_commands=sync_cfg
                         )  
         
-        bot  = ClientUser(intents=intents, command_prefix="?", command_sync_flag=command_sync_config)        
+        bot  = ClientUser(intents=intents, command_prefix="k!", command_sync_flag=command_sync_config)        
         
         bot.load_modules()
         print("-"*40)
@@ -70,15 +70,14 @@ class ClientUser(commands.AutoShardedBot):
     
     async def on_ready(self):
             print("-"*40)
-            print('Logged in as')
-            print(self.user.name)
-            print(self.user.id)
-            print('-'*40)
+            print(f"|{Fore.GREEN} Client: {self.user.name} - {self.user.id} Ready\n")
             await self.process_rpc()
             if not os.environ.get("MONGOSERVER"):
-                print(f"{Fore.RED}[ ❌ ] [MongoDB] No Database connected, abort")
+                print(f"| {Fore.RED}[ ❌ ] [MongoDB] No Database connected, abort")
                 return
             await self.serverdb.connect()
+            self.handle_language.load_localizations()
+            print("-"*40)
             
     async def process_rpc(self):
         activity = disnake.Activity(

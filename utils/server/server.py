@@ -16,7 +16,7 @@ class Server():
         self.servers = self.client.db.servers
         self.ignored_roles = self.client.db.ignored_roles
         self.language = self.client.db.language
-        print(f"{Fore.GREEN}[ ✅ ] [MongoDB] Connected to Server Database")
+        print(f"| {Fore.GREEN}[ ✅ ] [MongoDB] Connected to Server Database")
 
 
     async def guild_language(self, guild_id: int):
