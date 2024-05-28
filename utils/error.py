@@ -8,7 +8,7 @@ import traceback
 from utils.server.language_handle import LocalizationManager
 
 localization_manager = LocalizationManager()
-
+localization_manager.load_localizations()
 class ClientException(commands.CheckFailure):
     pass
 
