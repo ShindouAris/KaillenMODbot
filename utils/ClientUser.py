@@ -79,6 +79,9 @@ class ClientUser(commands.AutoShardedBot):
             self.handle_language.load_localizations()
             print("-"*40)
             
+    async def on_resume(self):
+        logger.info(f"Client Resumed")
+            
     async def process_rpc(self):
         activity = disnake.Activity(
                         type=disnake.ActivityType.watching,
