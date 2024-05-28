@@ -80,5 +80,10 @@
     "channel_deleted": "Kênh bị xóa",
     "channel_deleted_mention": "{channel} đã bị xóa",
     "channel_updated": "Kênh đã được cập nhật",
-    "channel_updated_mention": "{channel} đã được cập nhật"
+    "channel_updated_mention": "{channel} đã được cập nhật",
+    "days": "ngày",
+    "hours": "giờ",
+    "min": "phút",
+    "sec": "giây",
+    "and": "và"
 }

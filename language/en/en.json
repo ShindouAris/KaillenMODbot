@@ -80,5 +80,10 @@
     "channel_deleted": "Channel deleted",
     "channel_deleted_mention": "{channel} deleted",
     "channel_updated": "Channel updated",
-    "channel_updated_mention": "{channel} updated"
+    "channel_updated_mention": "{channel} updated",
+    "days": "days",
+    "hours": "hours",
+    "min": "minutes",
+    "sec": "seconds",
+    "and": "and"
 }

@@ -11,7 +11,7 @@ class LocalizationManager():
         
     
 
-    def load_localizations(self):
+    def load_localizations(self, silent: bool = False):
         """Tải các dữ liệu bản dịch vào ram"""
         logging.basicConfig(level=logging.INFO, format=FORMAT)
         for root, dirs, files in os.walk(self.locale_dir):
@@ -20,6 +20,8 @@ class LocalizationManager():
                     locale = os.path.basename(root)  # Lấy tên thư mục cha làm key (vd: 'en-US', 'vi-VN')
                     with open(os.path.join(root, filename), 'r', encoding='utf-8') as f:
                         self.localizations[locale] = json.load(f)
+                        if silent:
+                            return
                         logging.info(Fore.GREEN + f"| [ ✅ ] Tải bộ ngôn ngữ {locale} thành công" + Style.RESET_ALL)
                            
 

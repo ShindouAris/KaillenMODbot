@@ -8,7 +8,7 @@ import traceback
 from utils.server.language_handle import LocalizationManager
 
 localization_manager = LocalizationManager()
-localization_manager.load_localizations()
+localization_manager.load_localizations(silent=True)
 class ClientException(commands.CheckFailure):
     pass
 
@@ -48,7 +48,7 @@ def parse_error(
             if remaing < 1:
                 remaing = 1
             error_txt = localization_manager.get(language, 'command_on_cooldown_error') \
-                            .format(time = time_format(int(remaing) * 1000, use_names=True))
+                            .format(time = time_format(int(remaing) * 1000, use_names=True, language=language))
             
     if isinstance(error, GenericError):
         error_txt = error.text

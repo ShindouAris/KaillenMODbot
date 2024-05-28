@@ -1,7 +1,10 @@
 from typing import Union
+from utils.server.language_handle import LocalizationManager
 
+loc = LocalizationManager()
+loc.load_localizations(silent=True)
 
-def time_format(milliseconds: Union[int, float], use_names: bool = False) -> str:
+def time_format(milliseconds: Union[int, float], use_names: bool = False, language: str = "vi") -> str:
     minutes, seconds = divmod(int(milliseconds / 1000), 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
@@ -11,10 +14,10 @@ def time_format(milliseconds: Union[int, float], use_names: bool = False) -> str
         times = []
 
         for time_, name in (
-                (days, "ngày"),
-                (hours, "giờ"),
-                (minutes, "phút"),
-                (seconds, "giây")
+                (days, loc.get(language, "days")),
+                (hours, loc.get(language, "hours")),
+                (minutes, loc.get(language, "min")),
+                (seconds, loc.get(language, "sec"))
         ):
             if not time_:
                 continue
@@ -25,12 +28,12 @@ def time_format(milliseconds: Union[int, float], use_names: bool = False) -> str
             last_time = times.pop()
         except IndexError:
             last_time = None
-            times = ["1 giây"]
+            times = ["1s"]
 
         strings = ", ".join(t for t in times)
 
         if last_time:
-            strings += f" và {last_time}" if strings else last_time
+            strings += f" {loc.get(language, "and")} {last_time}" if strings else last_time
 
     else:
 
@@ -40,7 +43,7 @@ def time_format(milliseconds: Union[int, float], use_names: bool = False) -> str
             strings = f"{hours}:{strings}"
 
         if days:
-            strings = (f"{days} ngày" if days > 1 else f"{days} ngày") + (f", {strings}" if strings != "00:00" else "")
+            strings = (f"{days} d" if days > 1 else f"{days} d") + (f", {strings}" if strings != "00:00" else "")
 
     return strings
 
