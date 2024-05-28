@@ -33,7 +33,7 @@ def time_format(milliseconds: Union[int, float], use_names: bool = False, langua
         strings = ", ".join(t for t in times)
 
         if last_time:
-            strings += f" {loc.get(language, "and")} {last_time}" if strings else last_time
+            strings += f" {loc.get(language, 'and')} {last_time}" if strings else last_time
 
     else:
 
