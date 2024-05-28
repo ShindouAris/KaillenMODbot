@@ -20,9 +20,9 @@ class LocalizationManager():
                     locale = os.path.basename(root)  # Lấy tên thư mục cha làm key (vd: 'en-US', 'vi-VN')
                     with open(os.path.join(root, filename), 'r', encoding='utf-8') as f:
                         self.localizations[locale] = json.load(f)
-                        if silent:
-                            return
-                        logging.info(Fore.GREEN + f"| [ ✅ ] Tải bộ ngôn ngữ {locale} thành công" + Style.RESET_ALL)
+                        if not silent:
+                            logging.info(Fore.GREEN + f"| [ ✅ ] Tải bộ ngôn ngữ {locale} thành công" + Style.RESET_ALL)
+                        else: pass
                            
 
     def get(self, locale, key) -> str:

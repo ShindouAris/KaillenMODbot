@@ -107,10 +107,10 @@ class ClientUser(commands.AutoShardedBot):
                 module_filename = os.path.join(modules_dir, filename).replace('\\', '.').replace('/', '.')
                 try:
                     self.reload_extension(module_filename)
-                    logger.debug(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
+                    logger.info(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
                 except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
                     self.load_extension(module_filename)
-                    logger.debug(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
+                    logger.info(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
                 except Exception as e:
                     logger.error(f"[❌] Đã có lỗi xảy ra với Module {file}: Lỗi: {repr(e)}")
                     continue
@@ -134,10 +134,10 @@ class ClientUser(commands.AutoShardedBot):
                 module_filename = os.path.join(eventdir, filename).replace('\\', '.').replace('/', '.')
                 try:
                     self.reload_extension(module_filename)
-                    logger.debug(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
+                    logger.info(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
                 except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
                     self.load_extension(module_filename)
-                    logger.debug(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
+                    logger.info(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
                 except Exception as e:
                     logger.error(f" [❌] Đã có lỗi xảy ra với Event {file}: Lỗi: {repr(e)}")
                     continue
