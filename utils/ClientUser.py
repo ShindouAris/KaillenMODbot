@@ -12,7 +12,7 @@ import logging
 
 load_dotenv()
 
-FORMAT = '%(asctime)s %(message)s'
+FORMAT = '%(asctime)s || [%(levelname)s] [%(funcName)s]: %(message)s'
 
 logger = logging.getLogger(__name__)
 class LoadBot:
@@ -70,12 +70,12 @@ class ClientUser(commands.AutoShardedBot):
     
     async def on_ready(self):
             print("-"*40)
-            print(f"|{Fore.GREEN} Client: {self.user.name} - {self.user.id} Ready\n")
+            logger.info(f"|{Fore.GREEN} Client: {self.user.name} - {self.user.id} Ready{Style.RESET_ALL}")
             await self.process_rpc()
             if not os.environ.get("MONGOSERVER"):
-                print(f"| {Fore.RED}[ ❌ ] [MongoDB] No Database connected, abort")
+                logger.warning(f"| {Fore.RED}[ ❌ ] [MongoDB] No Database connected, abort")
                 return
-            await self.serverdb.connect()
+            await self.serverdb.connect_to_MongoDB()
             self.handle_language.load_localizations()
             print("-"*40)
             
@@ -84,7 +84,7 @@ class ClientUser(commands.AutoShardedBot):
                         type=disnake.ActivityType.watching,
                         name="Guild log",
                     )
-        
+        logger.info('Load RPC')
         await ClientUser.change_presence(self, activity=activity)
     
 
@@ -104,12 +104,12 @@ class ClientUser(commands.AutoShardedBot):
                 module_filename = os.path.join(modules_dir, filename).replace('\\', '.').replace('/', '.')
                 try:
                     self.reload_extension(module_filename)
-                    print(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
+                    logger.debug(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
                 except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
                     self.load_extension(module_filename)
-                    print(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
+                    logger.debug(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
                 except Exception as e:
-                    print(f"[❌] Đã có lỗi xảy ra với Module {file}: Lỗi: {repr(e)}")
+                    logger.error(f"[❌] Đã có lỗi xảy ra với Module {file}: Lỗi: {repr(e)}")
                     continue
                 
         return load_status
@@ -131,12 +131,12 @@ class ClientUser(commands.AutoShardedBot):
                 module_filename = os.path.join(eventdir, filename).replace('\\', '.').replace('/', '.')
                 try:
                     self.reload_extension(module_filename)
-                    print(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
+                    logger.debug(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
                 except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
                     self.load_extension(module_filename)
-                    print(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
+                    logger.debug(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
                 except Exception as e:
-                    print(f" [❌] Đã có lỗi xảy ra với Event {file}: Lỗi: {repr(e)}")
+                    logger.error(f" [❌] Đã có lỗi xảy ra với Event {file}: Lỗi: {repr(e)}")
                     continue
                 
         return event_loadstat
