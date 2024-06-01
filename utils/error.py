@@ -5,10 +5,8 @@ from utils.conv import time_format
 from pymongo.errors import ServerSelectionTimeoutError
 from typing import Optional
 import traceback
-from utils.server.language_handle import LocalizationManager
+from utils.loc import loc as localization_manager
 
-localization_manager = LocalizationManager()
-localization_manager.load_localizations(silent=True)
 class ClientException(commands.CheckFailure):
     pass
 
@@ -27,27 +25,27 @@ def parse_error(
     error_txt = ""
         
     if isinstance(error, commands.NotOwner):
-            error_txt = localization_manager.get(language,"not_owner_error")
+            error_txt = localization_manager.get(language, 'error',"not_owner_error")
             
     if isinstance(error, ServerSelectionTimeoutError):
-            error_txt = localization_manager.get(language, 'selection_timeout_error')
+            error_txt = localization_manager.get(language, 'error','selection_timeout_error')
 
     if isinstance(error, commands.BotMissingPermissions):
-            error_txt = localization_manager.get(language, 'bot_missing_permissions_error') \
-                .format(permissions=", ".join(localization_manager.get(language, perm) for perm in error.missing_permissions))
+            error_txt = localization_manager.get(language, 'error','bot_missing_permissions_error') \
+                .format(permissions=", ".join(localization_manager.get(language, 'perm',perm) for perm in error.missing_permissions))
 
     if isinstance(error, commands.MissingPermissions):
-            error_txt = localization_manager.get(language, 'missing_permissions_error') \
-                .format(permissions=", ".join(localization_manager.get(language, perm) for perm in error.missing_permissions))
+            error_txt = localization_manager.get(language, 'error','missing_permissions_error') \
+                .format(permissions=", ".join(localization_manager.get(language, 'perm',perm) for perm in error.missing_permissions))
                 
     if isinstance(error, commands.NoPrivateMessage):
-            error_txt = localization_manager.get(language, 'no_private_message_error')
+            error_txt = localization_manager.get(language, 'error','no_private_message_error')
         
     if isinstance(error, commands.CommandOnCooldown):
             remaing = int(error.retry_after)
             if remaing < 1:
                 remaing = 1
-            error_txt = localization_manager.get(language, 'command_on_cooldown_error') \
+            error_txt = localization_manager.get(language, "error",'command_on_cooldown_error') \
                             .format(time = time_format(int(remaing) * 1000, use_names=True, language=language))
             
     if isinstance(error, GenericError):

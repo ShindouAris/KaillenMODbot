@@ -12,24 +12,29 @@ class LocalizationManager():
     
 
     def load_localizations(self, silent: bool = False):
-        """Tải các dữ liệu bản dịch vào ram"""
-        logging.basicConfig(level=logging.INFO, format=FORMAT)
+        """Tải các dữ liệu bản dịch vào RAM"""
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         for root, dirs, files in os.walk(self.locale_dir):
+            # Chỉ lấy thư mục ngôn ngữ (tránh thư mục gốc và các thư mục không phải ngôn ngữ)
+            if root == self.locale_dir:
+                continue
+
+            language_code = os.path.basename(root)
+            self.localizations[language_code] = {}
+
             for filename in files:
                 if filename.endswith('.json'):
-                    locale = os.path.basename(root)  # Lấy tên thư mục cha làm key (vd: 'en-US', 'vi-VN')
-                    with open(os.path.join(root, filename), 'r', encoding='utf-8') as f:
-                        self.localizations[locale] = json.load(f)
+                    filepath = os.path.join(root, filename)
+                    with open(filepath, 'r', encoding='utf-8') as file:
+                        category = filename[:-5]
+                        self.localizations[language_code][category] = json.load(file)
                         if not silent:
-                            logging.info(Fore.GREEN + f"| [ ✅ ] Tải bộ ngôn ngữ {locale} thành công" + Style.RESET_ALL)
-                        else: pass
+                            logging.info(f"Loaded file {filename} for {language_code} language :>")
                            
 
-    def get(self, locale, key) -> str:
+    def get(self, locale: str, categoryKey: str, key: str) -> str:
         """Lấy dữ liệu dịch
-        
-        
-        
-        USAGE: get(language, 'some_key')
+
+        USAGE: get(language, categoryKey, 'some_key')
         """
-        return self.localizations.get(locale, {}).get(key, key)
+        return self.localizations.get(locale, {}).get(categoryKey, {}).get(key, key)

@@ -36,14 +36,14 @@ class OnMessageEdit(commands.Cog):
             return
 
         embed = disnake.Embed(
-            title=self.client.handle_language.get(language["language"], "message_edit"),
-            description=self.client.handle_language.get(language["language"], "message_edit_msg").format(mention_author=before.author.mention, channel=before.channel.mention),
+            title=self.client.handle_language.get(language["language"], 'user',"message_edit"),
+            description=self.client.handle_language.get(language["language"], 'user',"message_edit_msg").format(mention_author=before.author.mention, channel=before.channel.mention),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )
 
-        embed.add_field(name=self.client.handle_language.get(language["language"], "before"), value=before.content, inline=False)
-        embed.add_field(name=self.client.handle_language.get(language["language"], "after"), value=after.content, inline=False)
+        embed.add_field(name=self.client.handle_language.get(language["language"], "commands","before"), value=before.content, inline=False)
+        embed.add_field(name=self.client.handle_language.get(language["language"], "commands","after"), value=after.content, inline=False)
 
         await self.client.webhook_utils.process_webhook(channel, embed)
 

@@ -50,7 +50,7 @@ class Ping(commands.Cog):
                              f"> <:disnake:1204300267257069569> **⠂Disnake:** `Pre-release {disnake.__version__}`\n" \
                              f"> <:home:1208751844373827607> **⠂OS:** `{platform.system()} {platform.release()} {platform.machine()}`\n" \
                              f"> <:cpu:1146331051556339712> **⠂CPU:** `{psutil.cpu_percent()}% \ 100%, ({psutil.cpu_count()} Core)`\n" \
-                             f"> 📶 **API:** `{latency_bot}ms`\n" \
+                             f"> 📶 **⠂API:** `{latency_bot}ms`\n" \
                              f"{ram_msg}" \
                              f"> <a:loading:1204300257874288681> **⠂Uptime:** <t:{int(self.bot.uptime.timestamp())}:R>\n" \
                              f"> <:hsr_OneiricShard:1241024010964172870> **⠂ShardID:** {inter.guild.shard_id}"

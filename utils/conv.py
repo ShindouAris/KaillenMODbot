@@ -1,8 +1,5 @@
 from typing import Union
-from utils.server.language_handle import LocalizationManager
-
-loc = LocalizationManager()
-loc.load_localizations(silent=True)
+from utils.loc import loc
 
 def time_format(milliseconds: Union[int, float], use_names: bool = False, language: str = "vi") -> str:
     minutes, seconds = divmod(int(milliseconds / 1000), 60)
@@ -14,10 +11,10 @@ def time_format(milliseconds: Union[int, float], use_names: bool = False, langua
         times = []
 
         for time_, name in (
-                (days, loc.get(language, "days")),
-                (hours, loc.get(language, "hours")),
-                (minutes, loc.get(language, "min")),
-                (seconds, loc.get(language, "sec"))
+                (days, loc.get(language, 'time',"days")),
+                (hours, loc.get(language, 'time',"hours")),
+                (minutes, loc.get(language, 'time',"min")),
+                (seconds, loc.get(language, 'time',"sec"))
         ):
             if not time_:
                 continue
@@ -33,7 +30,7 @@ def time_format(milliseconds: Union[int, float], use_names: bool = False, langua
         strings = ", ".join(t for t in times)
 
         if last_time:
-            strings += f" {loc.get(language, 'and')} {last_time}" if strings else last_time
+            strings += f" {loc.get(language, 'time','and')} {last_time}" if strings else last_time
 
     else:
 

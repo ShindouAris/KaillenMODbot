@@ -1,0 +1,15 @@
+{
+    "active_server_log_msg": "<:verify:1134033164151566460> Activated server log for server {guild_name}\nSet up channel: {channel_mention}\n`If you want to remove this function, kick the bot off the server and the bot will automatically delete your data:>`",
+    "add_ignore_role_msg": "Added role {role_name} to the ignore list",
+    "remove_ignore_role_msg": "Removed role {role_name} to the ignore list",
+    "interact_user": "Implementer: {user}",
+    "change_server_log_channel": "<:verify:1134033164151566460> Changed server log channel for server {guild_name}\nChannel: {channel_mention}",
+    "server_log_not_found": "Please use the command\n```/serverlog```\nTo set up the server log system\nOr click here {cmd}",
+    "languageChange": "Language changed to English",
+    "ServerLogDescription": "Set up log channel for server",
+    "ignoreroleDescription": "Role will be ignored for the log server system",
+    "pingDescription": "Check the bot's ping",
+    "changeLanguageDescription": "Change the language that the bot will respond in the server",
+    "before": "Before",
+    "after": "After"
+}

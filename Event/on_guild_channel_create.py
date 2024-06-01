@@ -28,8 +28,8 @@ class OnGuildChannelCreate(commands.Cog):
             return
 
         embed = disnake.Embed(
-            title=self.client.handle_language.get(language["language"], "channel_created"),
-            description=self.client.handle_language.get(language["language"], "channel_created_mention").format(channel = channel.mention),
+            title=self.client.handle_language.get(language["language"], "channel","channel_created"),
+            description=self.client.handle_language.get(language["language"], "channel","channel_created_mention").format(channel = channel.mention),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

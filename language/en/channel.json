@@ -1,0 +1,8 @@
+{
+    "channel_created": "Channel created",
+    "channel_created_mention": "{channel} created",
+    "channel_deleted": "Channel deleted",
+    "channel_deleted_mention": "{channel} deleted",
+    "channel_updated": "Channel updated",
+    "channel_updated_mention": "{channel} updated"
+}

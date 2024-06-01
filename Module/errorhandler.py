@@ -26,7 +26,7 @@ class HandleError(commands.Cog):
         
         
         language = await self.bot.serverdb.guild_language(ctx.guild_id)
-        title_txt = self.bot.handle_language.get(language["language"], 'error_title')
+        title_txt = self.bot.handle_language.get(language["language"], "error", 'error_title')
         
         error_msg, full_error_msg = parse_error(ctx, error, language["language"])
         
@@ -103,7 +103,7 @@ class HandleError(commands.Cog):
             return
         
         language = await self.bot.serverdb.guild_language(ctx.guild_id)
-        title_txt = self.bot.handle_language.get(language["language"], 'error_title')
+        title_txt = self.bot.handle_language.get(language["language"], "error", 'error_title')
 
         error_msg = parse_error(ctx, error)
         kwargs = {"content": ""}

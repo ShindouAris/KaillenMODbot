@@ -29,8 +29,8 @@ class OnGuildChannelDelete(commands.Cog):
             return
         
         embed = disnake.Embed(
-            title=self.client.handle_language.get(language["language"], "channel_deleted"),
-            description=self.client.handle_language.get(language["language"], "channel_deleted_mention").format(channel=channel.name),
+            title=self.client.handle_language.get(language["language"], "channel","channel_deleted"),
+            description=self.client.handle_language.get(language["language"], 'channel',"channel_deleted_mention").format(channel=channel.name),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

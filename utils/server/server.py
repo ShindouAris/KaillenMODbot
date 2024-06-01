@@ -24,7 +24,7 @@ class Server():
         logger.info(f"| {Fore.GREEN}[ ✅ ] Connected to Server Database{Style.RESET_ALL}")
 
 
-    async def guild_language(self, guild_id: int):
+    async def guild_language(self, guild_id: int) -> dict:
         data = await s2a(self.language.find_one)({"guild_id": guild_id})
         if data is None:
             return {

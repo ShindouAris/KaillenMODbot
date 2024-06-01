@@ -37,8 +37,8 @@ class OnMessageDelete(commands.Cog):
         
 
         embed = disnake.Embed(
-            title=self.client.handle_language.get(language["language"], "message_delete"),
-            description=self.client.handle_language.get(language["language"], "message_delete_msg").format(mention_author=message.author.mention, channel=message.channel.mention),
+            title=self.client.handle_language.get(language["language"], 'user',"message_delete"),
+            description=self.client.handle_language.get(language["language"], 'user',"message_delete_msg").format(mention_author=message.author.mention, channel=message.channel.mention),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),  # Use Set time for consistency
         )
@@ -55,7 +55,7 @@ class OnMessageDelete(commands.Cog):
         elif message.attachments:
             embed.set_image(url=message.attachments[0].url)
         else:
-            embed.add_field(name=self.client.handle_language.get(language["language"], "message_delete"), value=message.content, inline=False)
+            embed.add_field(name=self.client.handle_language.get(language["language"], 'user',"message_delete"), value=message.content, inline=False)
         
 
         await self.client.webhook_utils.process_webhook(channel, embed)

@@ -1,0 +1,12 @@
+{
+    "user_added_role": "Role đã được {userName} thêm vào: {AddedRole}",
+    "user_removed_role": "Role đã bị loại bỏ khỏi {userName}: {AddedRole}",
+    "message_edit": "Tin nhắn được chỉnh sửa:",
+    "message_edit_msg": "Tin nhắn được gửi bởi {mention_author} đã sửa trong {channel}",
+    "message_delete": "Tin nhắn đã xóa",
+    "message_delete_msg": "Tin nhắn gửi bởi {mention_author} xóa ở {channel}",
+    "unban_user": "Bỏ cấm thành viên:",
+    "mention_user_unban": "{user} đã được bỏ cấm khỏi máy chủ!",
+    "ban_user": "Thành viên bị cấm khỏi máy chủ:",
+    "mention_user_banned": "{user} đã bị cấm khỏi máy chủ!"
+}

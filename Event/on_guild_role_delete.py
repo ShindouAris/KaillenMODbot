@@ -28,8 +28,8 @@ class OnGuildRoleDelete(commands.Cog):
             return
 
         embed = disnake.Embed(
-            title=self.client.handle_language.get(language["language"], "role_deleted"),
-            description=self.client.handle_language.get(language["language"], "mention_role_deleted").format(role=role.name),
+            title=self.client.handle_language.get(language["language"], 'role',"role_deleted"),
+            description=self.client.handle_language.get(language["language"], 'role',"mention_role_deleted").format(role=role.name),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

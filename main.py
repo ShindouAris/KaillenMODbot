@@ -1,5 +1,6 @@
 from utils.ClientUser import LoadBot
 from colorama import Fore, Style
+from time import sleep
 
 print(f""" 
       {Fore.RED}       ____  _   _ ___ _   _ ____   ___  _   _       ____  _______     __
@@ -10,4 +11,5 @@ print(f"""
 
 bot = LoadBot()
 
+sleep(3) # Wait 3 sec before booting up...
 bot.load()

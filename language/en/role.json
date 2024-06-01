@@ -1,0 +1,8 @@
+{
+    "role_updated": "Role Updated:", 
+    "mention_role_update": "{role} updated",
+    "role_deleted": "Role Deleted:",
+    "mention_role_deleted": "{role} has been deleted",
+    "role_created": "Role created",
+    "mention_role_created": "{role} have been created"
+}

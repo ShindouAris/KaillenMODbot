@@ -1,0 +1,12 @@
+{
+    "user_added_role": "Roles added to {userName}: {role}",
+    "user_removed_role": "Roles removed from {userName}: {role}",
+    "message_delete": "Message Deleted",
+    "message_delete_msg": "The message was sent by {mention_author} deleted at {channel}",
+    "unban_user": "User Unban:",
+    "mention_user_unban": "{user} has been unbanned from the server!",
+    "ban_user": "Banned User:",
+    "mention_user_banned": "{user} has been banned from the server!",
+    "message_edit": "Message Edited:",
+    "message_edit_msg": "Message sent by {mention_author} edited in {channel}"
+}

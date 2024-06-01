@@ -16,10 +16,10 @@ class SlashCommandHelp(commands.Cog):
         pingcmd = f"</ping:" + str(self.bot.get_global_command_named("ping", cmd_type=disnake.ApplicationCommandType.chat_input).id) +">"
         change_language_cmd = f"</change_language:" + str(self.bot.get_global_command_named("change_language", cmd_type=disnake.ApplicationCommandType.chat_input).id) + ">"
         server_language = await self.bot.serverdb.guild_language(inter.guild_id)
-        serverDes =  self.bot.handle_language.get(server_language["language"], "ServerLogDescription")
-        role_Des =  self.bot.handle_language.get(server_language["language"], "ignoreroleDescription")
-        pingDes =  self.bot.handle_language.get(server_language["language"], "pingDescription")
-        change_language_Des = self.bot.handle_language.get(server_language["language"], "changeLanguageDescription")
+        serverDes =  self.bot.handle_language.get(server_language["language"], "commands","ServerLogDescription")
+        role_Des =  self.bot.handle_language.get(server_language["language"], "commands","ignoreroleDescription")
+        pingDes =  self.bot.handle_language.get(server_language["language"], "commands","pingDescription")
+        change_language_Des = self.bot.handle_language.get(server_language["language"], "commands", "changeLanguageDescription")
         
         embed = disnake.Embed(title=f"Help - {inter.me.name}")
         embed.add_field(name=f"{serverlogcmd}", value=serverDes, inline=False)

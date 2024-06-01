@@ -25,8 +25,8 @@ class OnGuildRoleCreate(commands.Cog):
             return
         
         embed = disnake.Embed(
-            title=self.client.handle_language.get(language["language"], "role_created"),
-            description=self.client.handle_language.get(language["language"], "mention_role_created").format(role = role.mention),
+            title=self.client.handle_language.get(language["language"], 'role',"role_created"),
+            description=self.client.handle_language.get(language["language"], 'role',"mention_role_created").format(role = role.mention),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

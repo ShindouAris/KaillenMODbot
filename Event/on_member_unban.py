@@ -26,8 +26,8 @@ class ONUNBAN(commands.Cog):
             return
 
         embed = disnake.Embed(
-            title=self.client.handle_language.get(language["language"], "unban_user"),
-            description=self.client.handle_language.get(language["language"], "mention_user_unban").format(user=user.name),
+            title=self.client.handle_language.get(language["language"], 'user',"unban_user"),
+            description=self.client.handle_language.get(language["language"], 'user',"mention_user_unban").format(user=user.name),
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )

@@ -1,0 +1,9 @@
+{
+    "not_owner_error": "**Chỉ nhà phát triển của tôi mới có thể sử dụng lệnh này**",
+    "selection_timeout_error": "Đã có sự cố về cơ sở dữ liệu của tôi",
+    "bot_missing_permissions_error": "Tôi không có các quyền sau để thực thi lệnh này: ```{permissions}```",
+    "missing_permissions_error": "Bạn không có các quyền sau để thực hiện lệnh này: ```{permissions}```",
+    "no_private_message_error": "Lệnh này không thể chạy trên tin nhắn riêng tư.",
+    "command_on_cooldown_error": "**Bạn phải đợi {time} nữa mới có thể sử dụng lệnh này.**",
+    "error_title": "**Đã có một sự cố đã xảy ra:**"
+}

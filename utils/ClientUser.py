@@ -31,6 +31,7 @@ class LoadBot:
         intents.guilds = True
         intents.moderation = True
         intents.messages = True
+        intents.members = True
            
         sync_cfg = True
         command_sync_config = commands.CommandSyncFlags(
@@ -76,6 +77,7 @@ class ClientUser(commands.AutoShardedBot):
                 logger.warning(f"| {Fore.RED}[ ❌ ] [MongoDB] No Database connected, abort")
                 return
             await self.serverdb.connect_to_MongoDB()
+            print("-"*40)
             self.handle_language.load_localizations()
             print("-"*40)
             
@@ -93,53 +95,69 @@ class ClientUser(commands.AutoShardedBot):
 
     def load_modules(self):
 
-        modules_dir = "Module"
+        modules_dir = ["Module", "ModuleDEV"]
 
         load_status = {
             "reloaded": [],
             "loaded": []
         }
+        for module_dir in modules_dir:
         
-        for item in os.walk(modules_dir):
-            files = filter(lambda f: f.endswith('.py'), item[-1])
-            for file in files:
-                filename, _ = os.path.splitext(file)
-                module_filename = os.path.join(modules_dir, filename).replace('\\', '.').replace('/', '.')
-                try:
-                    self.reload_extension(module_filename)
-                    logger.info(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
-                except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
-                    self.load_extension(module_filename)
-                    logger.info(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
-                except Exception as e:
-                    logger.error(f"[❌] Đã có lỗi xảy ra với Module {file}: Lỗi: {repr(e)}")
-                    continue
+            for item in os.walk(module_dir):
+                files = filter(lambda f: f.endswith('.py'), item[-1])
+                for file in files:
+                    filename, _ = os.path.splitext(file)
+                    module_filename = os.path.join(module_dir, filename).replace('\\', '.').replace('/', '.')
+                    try:
+                        self.reload_extension(module_filename)
+                        logger.info(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
+                    except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
+                        try:
+                            self.load_extension(module_filename)
+                            logger.info(f'{Fore.GREEN} [ ✅ ] Module {file} Đã tải lên thành công{Style.RESET_ALL}')
+                        except Exception as e:
+                            logger.error(f"[❌] Đã có lỗi xảy ra với Module {file}: Lỗi: {repr(e)}")
+                            continue
+                    except Exception as e:
+                            logger.error(f"[❌] Đã có lỗi xảy ra với Module {file}: Lỗi: {repr(e)}")
+                            break
+                
                 
         return load_status
 
     
     def load_events(self):
 
-        eventdir =  "Event"
+        eventdir =  ["Event", "EventDEV"]
 
         event_loadstat = {
             "loaded": [],
-           "reloaded": []
+           "reloaded": [],
+           "fail": []
         }
+        for events_dir in eventdir:
 
-        for item in os.walk(eventdir):
-            files = filter(lambda f: f.endswith('.py'), item[-1])
-            for file in files:
-                filename, _ = os.path.splitext(file)
-                module_filename = os.path.join(eventdir, filename).replace('\\', '.').replace('/', '.')
-                try:
-                    self.reload_extension(module_filename)
-                    logger.info(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
-                except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
-                    self.load_extension(module_filename)
-                    logger.info(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
-                except Exception as e:
-                    logger.error(f" [❌] Đã có lỗi xảy ra với Event {file}: Lỗi: {repr(e)}")
-                    continue
-                
+            for item in os.walk(events_dir):
+                files = filter(lambda f: f.endswith('.py'), item[-1])
+                for file in files:
+                    filename, _ = os.path.splitext(file)
+                    module_filename = os.path.join(events_dir, filename).replace('\\', '.').replace('/', '.')
+                    try:
+                        self.reload_extension(module_filename)
+                        logger.info(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
+                        event_loadstat["reloaded"].append(file)
+                    except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
+                        try:
+                            self.load_extension(module_filename)
+                            logger.info(f'{Fore.GREEN} [ ✅ ] Event {file} Đã tải lên thành công{Style.RESET_ALL}')
+                            event_loadstat["loaded"].append(file)
+                        except Exception as e:
+                            logger.error(f" [❌] Đã có lỗi xảy ra với Event {file}: Lỗi: {repr(e)}")
+                            event_loadstat["fail"].append(file)
+                            continue
+                    except Exception as e:
+                        logger.error(f" [❌] Đã có lỗi xảy ra với Event {file}: Lỗi: {repr(e)}")
+                        event_loadstat["fail"].append(file)
+                        break
+
         return event_loadstat
