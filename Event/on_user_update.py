@@ -30,7 +30,7 @@ class OnMemberUpdate(commands.Cog):
                 
             kwargs = {
                 "userName": after.name,
-                "role": roleChange
+                "AddedRole": roleChange
             }
 
             # Lấy ngôn ngữ của server
