@@ -24,11 +24,14 @@ class Serverlog(commands.Cog):
         await ctx.response.defer()
         check = await self.bot.serverdb.check_database(ctx.guild.id)
         language = await self.bot.serverdb.guild_language(ctx.guild_id)
-        
+        kwargs = {
+            "guild_name": ctx.guild.name,
+            "channel_mention": channel.mention
+        }
         if check["status"] == "No_Data":    #! KHÔNG CÓ DỮ LIỆU
                     webhook = await channel.create_webhook(name="Kaillen Log")
                     await self.bot.serverdb.setupserverlog(ctx.guild.id, webhook.url)
-                    embed = disnake.Embed(title="Server Log", description=f"{self.bot.handle_language.get(language['language'], 'commands','active_server_log_msg').format(guild_name=ctx.guild.name, channel_mention=channel.mention)}")
+                    embed = disnake.Embed(title="Server Log", description=f"{self.bot.handle_language.get(language['language'], 'commands','active_server_log_msg').format(**kwargs)}")
                     embed.set_thumbnail(url="https://media.discordapp.net/stickers/1039992459209490513.png")
                     embed.set_footer(text=f"{self.bot.handle_language.get(language['language'], 'commands','interact_user').format(user=ctx.author.name)}", 
                                      icon_url=ctx.author.avatar.url)
@@ -38,7 +41,7 @@ class Serverlog(commands.Cog):
                         webhook = await channel.create_webhook(name="Kaillen Log")
                         await self.bot.serverdb.remove_server_log(ctx.guild_id, old_channel_webhook["webhook_uri"])
                         await self.bot.serverdb.setupserverlog(ctx.guild.id, webhook.url)
-                        embed = disnake.Embed(title="Server Log", description=f"{self.bot.handle_language.get(language['language'], 'commands','change_server_log_channel').format(guild_name=ctx.guild.name, channel_mention=channel.mention)}")
+                        embed = disnake.Embed(title="Server Log", description=f"{self.bot.handle_language.get(language['language'], 'commands','change_server_log_channel').format(**kwargs)}")
                         embed.set_thumbnail("https://media.discordapp.net/stickers/1039992459209490513.png")
                         embed.set_footer(text=f"{self.bot.handle_language.get(language['language'], 'commands','interact_user').format(user=ctx.author.name)}", 
                                         icon_url=ctx.author.avatar.url)
