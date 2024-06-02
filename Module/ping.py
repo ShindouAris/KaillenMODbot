@@ -44,7 +44,7 @@ class Ping(commands.Cog):
             
         embed = disnake.Embed(description="", color=0xC03865)
         
-        embed.description += f"### Thông tin của {self.bot.user.name}#{self.bot.user.discriminator}:\n"
+        embed.description += f"### About {self.bot.user.name}#{self.bot.user.discriminator}:\n"
         
         embed.description += f"> <:python:1204300262911774761> **⠂Python:** `{platform.python_version()}`\n" \
                              f"> <:disnake:1204300267257069569> **⠂Disnake:** `Pre-release {disnake.__version__}`\n" \
