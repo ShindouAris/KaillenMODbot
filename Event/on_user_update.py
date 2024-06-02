@@ -41,7 +41,7 @@ class OnMemberUpdate(commands.Cog):
             
             # Kiểm tra xem webhook_uri có tồn tại không
             if not webhook_uri or "webhook_uri" not in webhook_uri:
-                return
+                raise KeyError
             
             # Tạo Embed và thêm trường với thông tin vai trò
             embed = disnake.Embed()
