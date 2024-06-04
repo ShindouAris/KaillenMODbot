@@ -1,8 +1,6 @@
 import os, json
-from colorama import Fore, Style
 import logging
 
-FORMAT = '%(asctime)s || [%(levelname)s] [%(funcName)s]: %(message)s'
 logger = logging.getLogger(__name__)
 class LocalizationManager():
     def __init__(self, locale_dir='language'):
@@ -13,7 +11,6 @@ class LocalizationManager():
 
     def load_localizations(self, silent: bool = False):
         """Tải các dữ liệu bản dịch vào RAM"""
-        logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         for root, dirs, files in os.walk(self.locale_dir):
             # Chỉ lấy thư mục ngôn ngữ (tránh thư mục gốc và các thư mục không phải ngôn ngữ)
             if root == self.locale_dir:
@@ -29,7 +26,7 @@ class LocalizationManager():
                         category = filename[:-5]
                         self.localizations[language_code][category] = json.load(file)
                         if not silent:
-                            logging.info(f"Loaded file {filename} for {language_code} language :>")
+                            logger.info(f"Loaded file {filename} for {language_code} language :>")
                            
 
     def get(self, locale: str, categoryKey: str, key: str) -> str:
