@@ -1,7 +1,7 @@
 import disnake
 
 from disnake.ext import commands
-from disnake import Localized, Locale
+                                
 
 from utils.ClientUser import ClientUser
 
