@@ -21,6 +21,7 @@ class GuildEntry(commands.Cog):
         try:
             await self.client.serverdb.remove_server_log(guild.id, guild_webhook)
             await self.client.serverdb.remove_ignored_role_data(guild.id)
+            await  self.client.serverdb.remove_language_on_leave(guild.id)
         except Exception:
             ...
 

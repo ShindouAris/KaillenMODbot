@@ -49,6 +49,13 @@ class Server():
         except Exception as e:
             return {"status": "Failed", "msg": e}
 
+    async def remove_language_on_leave(self, guild_id: int):
+        test = await self.guild_language(guild_id)
+        if test["status"] == "NoData":
+            return
+
+        await s2a(self.language.delete_one)({"guild_id": guild_id})
+
 
     async def check_role(self ,guild: int, role_id: int):
         data = await s2a(self.ignored_roles.find_one)({"guild_id": guild, "role_id": role_id})
