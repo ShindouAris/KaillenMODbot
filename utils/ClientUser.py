@@ -35,16 +35,7 @@ class ClientUser(commands.AutoShardedBot):
     async def on_resume(self):
         logger.info(f"Client Resumed")
         
-    async def close(self):
-        
-        # TODO: Lưu dữ liệu bot khi bị tắt
-        
-        
-        # self.cache.close()
-        
-        logger.info("Đang tắt....")
-        
-        await super().close()
+ 
             
     async def process_rpc(self):
         activity = disnake.Activity(
