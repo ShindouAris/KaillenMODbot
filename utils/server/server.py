@@ -1,4 +1,3 @@
-import sqlite3
 from colorama import Fore, Style
 from dotenv import load_dotenv
 from os import environ
@@ -7,21 +6,19 @@ from asgiref.sync import sync_to_async as s2a
 import logging
 load_dotenv()
 SERVER_URI = environ.get("MONGOSERVER")
-FORMAT = '%(asctime)s || [%(levelname)s] [%(funcName)s]: %(message)s'
 logger = logging.getLogger(__name__)
 class Server():
     def __init__(self):
-        self.database = sqlite3.Connection = None
+        pass
     
         
     async def connect_to_MongoDB(self, serveruri = SERVER_URI):
         """Connect to the database, if Aval"""
-        logging.basicConfig(level=logging.INFO, format=FORMAT)
         self.client = MongoClient(serveruri)
         self.servers = self.client.db.servers
         self.ignored_roles = self.client.db.ignored_roles
         self.language = self.client.db.language
-        logger.info(f"| {Fore.GREEN}[ ✅ ] Connected to Server Database{Style.RESET_ALL}")
+        logger.info(f"Connected to Server Database")
 
 
     async def guild_language(self, guild_id: int) -> dict:
