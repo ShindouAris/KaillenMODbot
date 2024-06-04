@@ -8,6 +8,7 @@ from utils.server.server import Server
 from utils.server.language_handle import LocalizationManager
 from utils.server.process_webhook import Process_webhook
 import logging
+from utils.server.server import GuildCache
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ class ClientUser(commands.AutoShardedBot):
         self.db =None
         self.handle_language = LocalizationManager()
         self.webhook_utils = Process_webhook()
-    
+        
     
     async def on_ready(self):
             logger.info(f"Client: {self.user.name} - {self.user.id} Ready")
@@ -33,6 +34,17 @@ class ClientUser(commands.AutoShardedBot):
             
     async def on_resume(self):
         logger.info(f"Client Resumed")
+        
+    async def close(self):
+        
+        # TODO: Lưu dữ liệu bot khi bị tắt
+        
+        
+        # self.cache.close()
+        
+        logger.info("Đang tắt....")
+        
+        await super().close()
             
     async def process_rpc(self):
         activity = disnake.Activity(
@@ -51,10 +63,7 @@ class ClientUser(commands.AutoShardedBot):
 
         modules_dir = ["Module", "ModuleDEV"]
 
-        load_status = {
-            "reloaded": [],
-            "loaded": []
-        }
+
         for module_dir in modules_dir:
         
             for item in os.walk(module_dir):
@@ -77,18 +86,13 @@ class ClientUser(commands.AutoShardedBot):
                             break
                 
                 
-        return load_status
+
 
     
     def load_events(self):
 
         eventdir =  ["Event", "EventDEV"]
 
-        event_loadstat = {
-            "loaded": [],
-           "reloaded": [],
-           "fail": []
-        }
         for events_dir in eventdir:
 
             for item in os.walk(events_dir):
@@ -99,23 +103,20 @@ class ClientUser(commands.AutoShardedBot):
                     try:
                         self.reload_extension(module_filename)
                         logger.info(f'Event {file} Đã tải lên thành công')
-                        event_loadstat["reloaded"].append(file)
+
                     except (commands.ExtensionAlreadyLoaded, commands.ExtensionNotLoaded):
                         try:
                             self.load_extension(module_filename)
                             logger.info(f'Event {file} Đã tải lên thành công')
-                            event_loadstat["loaded"].append(file)
+
                         except Exception as e:
                             logger.error(f"Đã có lỗi xảy ra với Event {file}: Lỗi: {repr(e)}")
-                            event_loadstat["fail"].append(file)
+
                             continue
                     except Exception as e:
                         logger.error(f"Đã có lỗi xảy ra với Event {file}: Lỗi: {repr(e)}")
-                        event_loadstat["fail"].append(file)
-                        break
 
-        return event_loadstat
-    
+                        break
 
 def start():
     logger.info("Booting Client....")
