@@ -1,2 +1,8 @@
 disnake
-dotenv
+python-dotenv
+colorama
+pymongo
+asgiref
+pytz
+psutil
+humanize
