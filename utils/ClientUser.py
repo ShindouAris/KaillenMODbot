@@ -41,6 +41,10 @@ class ClientUser(commands.AutoShardedBot):
                     )
         logger.info('Load RPC')
         await ClientUser.change_presence(self, activity=activity)
+        
+    def close(self):
+        self.serverdb.close()
+        return super().close()
     
 
     def load_modules(self):
