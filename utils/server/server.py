@@ -43,6 +43,7 @@ class GuildCache():
     def close(self):
         # TODO: thêm cái củ l này vào trong event shutdown
         logger.info("Đang lưu tất cả dữ liệu vào database")
+        count = 0
         for guild_id in self.storage:
             guild = self.storage.get(guild_id, None)
             if guild is None: continue
@@ -52,7 +53,10 @@ class GuildCache():
                 # self.database.db.servers.update_one({"guild_id": guild_id}, {"$set": {"language": guild["webhook_uri"]}})
             except Exception as e:
                 logger.error(f"Đã xảy ra lỗi khi cập nhật dữ liệu guild {guild_id} lên database: {repr(e)}")
-        logger.info(f"Đã đồng bộ cache của tất cả guilds lên database")
+            finally:
+                count += 1
+        
+        logger.info(f"Đã đồng bộ cache của {count} guilds lên database")
         
     def get_guild(self, guild_id: int) -> dict:
         "Fetch guild data from remote database"
@@ -118,6 +122,9 @@ class GuildCache():
 class Server():
     def __init__(self):
         pass
+    
+    def close(self):
+        self.cache.close()
     
         
     async def connect_to_MongoDB(self, serveruri = SERVER_URI):
