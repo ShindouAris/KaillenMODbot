@@ -1,5 +1,6 @@
 from colorama import Fore, Style
 from os import environ
+from dotenv import load_dotenv
 from pymongo import MongoClient
 from asgiref.sync import sync_to_async as s2a
 import logging
@@ -7,6 +8,8 @@ import asyncio
 
 SERVER_URI = environ.get("MONGOSERVER")
 logger = logging.getLogger(__name__)
+
+load_dotenv()
 
 class GuildCache():
     storage: dict[int, dict] = {}
