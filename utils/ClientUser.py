@@ -29,7 +29,7 @@ class ClientUser(commands.AutoShardedBot):
             if not os.environ.get("MONGOSERVER"):
                 logger.warning(f"No MongoDB database connected, abort")
                 return
-            await self.serverdb.connect_to_MongoDB()
+            await self.serverdb.connect_to_MongoDB(os.environ.get("MONGOSERVER"))
             self.handle_language.load_localizations()
             
     async def on_resume(self):
