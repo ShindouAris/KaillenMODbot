@@ -11,7 +11,7 @@ class Language(commands.Cog):
         self.client: ClientUser = client
         # self.Language = ["Tiếng Việt", "English"]
         
-    @commands.cooldown(1, 30, commands.BucketType.guild)
+    @commands.cooldown(1, 60, commands.BucketType.guild)
     @commands.has_guild_permissions(manage_guild=True)
     @commands.slash_command(name="change_language", description="Change the language that the bot will response in this server", dm_permission=False, 
                                                 options=[disnake.Option(name="language", 
