@@ -1,14 +1,10 @@
 from colorama import Fore, Style
 from os import environ
-from dotenv import load_dotenv
 from pymongo import MongoClient
 from asgiref.sync import sync_to_async as s2a
 import logging
 import asyncio
 
-load_dotenv()
-
-SERVER_URI = environ.get("MONGOSERVER")
 logger = logging.getLogger(__name__)
 
 class GuildCache():
@@ -130,7 +126,7 @@ class Server():
         self.cache.close()
     
         
-    async def connect_to_MongoDB(self, serveruri = SERVER_URI):
+    async def connect_to_MongoDB(self, serveruri):
         """Connect to the database, if Aval"""
         self.client = MongoClient(serveruri)
         self.servers = self.client.db.servers
