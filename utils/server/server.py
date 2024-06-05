@@ -6,10 +6,10 @@ from asgiref.sync import sync_to_async as s2a
 import logging
 import asyncio
 
+load_dotenv()
+
 SERVER_URI = environ.get("MONGOSERVER")
 logger = logging.getLogger(__name__)
-
-load_dotenv()
 
 class GuildCache():
     storage: dict[int, dict] = {}
