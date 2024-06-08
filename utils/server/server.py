@@ -126,9 +126,9 @@ class Server():
         self.cache.close()
     
         
-    async def connect_to_MongoDB(self, serveruri):
+    async def connect_to_MongoDB(self, serveruri = None):
         """Connect to the database, if Aval"""
-        self.client = MongoClient(serveruri)
+        self.client = MongoClient(host=serveruri)
         self.servers = self.client.db.servers
         self.ignored_roles = self.client.db.ignored_roles
         self.language = self.client.db.language
