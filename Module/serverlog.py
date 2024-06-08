@@ -57,8 +57,8 @@ class Serverlog(commands.Cog):
             return
         check = await self.bot.serverdb.check_database(ctx.guild.id)
         language = await self.bot.serverdb.guild_language(ctx.guild_id)
-        ADD_embed = disnake.Embed(title="ADD ROLE", description={self.bot.handle_language.get(language["language"], 'commands',"add_ignore_role_msg").format(role_name=role.name)}, color=disnake.Color.green()).set_footer(text={self.bot.handle_language.get(language['language'], 'interact_user').format(user=ctx.author.name)}, icon_url=self.bot.user.avatar)
-        REMOVE_embed = disnake.Embed(title="REMOVE ROLE", description={self.bot.handle_language.get(language["language"], 'commands',"remove_ignore_role_msg").format(role_name=role.name)}, color=disnake.Color.green()).set_footer(text={self.bot.handle_language.get(language['language'], 'interact_user').format(user=ctx.author.name)}, icon_url=self.bot.user.avatar)
+        ADD_embed = disnake.Embed(title="ADD ROLE", description={self.bot.handle_language.get(language["language"], 'commands',"add_ignore_role_msg").format(role_name=role.name)}, color=disnake.Color.green()).set_footer(text={self.bot.handle_language.get(language['language'], 'commands','interact_user').format(user=ctx.author.name)}, icon_url=self.bot.user.avatar)
+        REMOVE_embed = disnake.Embed(title="REMOVE ROLE", description={self.bot.handle_language.get(language["language"], 'commands',"remove_ignore_role_msg").format(role_name=role.name)}, color=disnake.Color.green()).set_footer(text={self.bot.handle_language.get(language['language'], 'commands','interact_user').format(user=ctx.author.name)}, icon_url=self.bot.user.avatar)
         if check["status"] == "Data_Found":
                         role_check = await self.bot.serverdb.check_role(ctx.guild.id, role.id)
                         if role_check["info"] == False: #?
