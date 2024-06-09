@@ -1,6 +1,9 @@
 import disnake
 from disnake.ext import commands
 from utils.ClientUser import ClientUser
+import  logging
+
+logger = logging.getLogger(__name__)
 
 class GuildEntry(commands.Cog):
     def __init__(self, bot: ClientUser):
@@ -22,7 +25,8 @@ class GuildEntry(commands.Cog):
             await self.client.serverdb.remove_server_log(guild.id, guild_webhook)
             await self.client.serverdb.remove_ignored_role_data(guild.id)
             await  self.client.serverdb.remove_language_on_leave(guild.id)
-        except Exception:
+        except Exception as e:
+            logger.error(f"Đã xảy ra lỗi {e}")
             ...
 
 def setup(bot: ClientUser): bot.add_cog(GuildEntry(bot))
