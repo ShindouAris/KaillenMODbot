@@ -1,3 +1,6 @@
+import asyncio
+import os
+# import subprocess
 import disnake
 from disnake.ext import commands
 from utils.ClientUser import ClientUser
@@ -11,6 +14,26 @@ class Owner(commands.Cog):
         self.bot.load_modules()
         self.bot.load_events()
         
+
+    @commands.is_owner()
+    @commands.command()
+    async def restart(self, ctx: disnake.ApplicationCommandInteraction):
+        await ctx.send("Đang khởi động lại...")
+        await asyncio.sleep(5)
+        self.bot.close()
+        try:
+            os.system("python3 main.py")
+        except:
+            os.system("py main.py")
+
+    @commands.is_owner()
+    @commands.command()
+    async def shutdown(self, ctx: disnake.ApplicationCommandInteraction):
+        await ctx.send("GoodBye")
+        await asyncio.sleep(5)
+        self.bot.close()
+
+
     @commands.is_owner()
     @commands.slash_command(name="reload", description="Tải lại các module")
     async def _reload_module(self, ctx: disnake.ApplicationCommandInteraction):
