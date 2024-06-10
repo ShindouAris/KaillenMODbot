@@ -26,12 +26,12 @@ class OnMessageEdit(commands.Cog):
             return #! Ignore if the message is the same
         language = await self.client.serverdb.guild_language(before.guild.id)
 
-        data = await self.client.serverdb.get_webhook(before.guild.id)
+        data = await self.client.serverdb.get_guild_webhook(before.guild.id)
 
         if data is None:
             return
         try:
-            channel = data["webhook_uri"]
+            channel = data
         except KeyError:
             return
 

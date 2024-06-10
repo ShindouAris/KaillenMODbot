@@ -18,12 +18,12 @@ class OnGuildChannelCreate(commands.Cog):
         language = await self.client.serverdb.guild_language(channel.guild.id)
    
 
-        data = await self.client.serverdb.get_webhook(channel.guild.id)
+        data = await self.client.serverdb.get_guild_webhook(channel.guild.id)
 
         if data is None:
             return
         try:
-          logchannel = data["webhook_uri"]
+          logchannel = data
         except KeyError:
             return
 

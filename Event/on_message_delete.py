@@ -24,13 +24,13 @@ class OnMessageDelete(commands.Cog):
             pass
 
         
-        data = await self.client.serverdb.get_webhook(message.guild.id)
+        data = await self.client.serverdb.get_guild_webhook(message.guild.id)
         language = await self.client.serverdb.guild_language(message.guild.id)
 
         if data is None:
             return
         try:
-            channel = data["webhook_uri"]
+            channel = data
         except KeyError:
             return  # Ignore if channel is None
         

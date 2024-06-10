@@ -1,15 +1,26 @@
-from colorama import Fore, Style
-from os import environ
 from pymongo import MongoClient
 from asgiref.sync import sync_to_async as s2a
 import logging
 import asyncio
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from utils.ClientUser import ClientUser
 
 logger = logging.getLogger(__name__)
 
+class db:
+    GuildSetting = "GuildSetting"
+
+db.GuildSetting = {
+        "guild_id": None,
+        "webhook_url": None,
+        "language": "vi",
+        "ignore_roles": []
+    }
+
 class GuildCache():
     storage: dict[int, dict] = {}
-    
+
     # Tasks
     async def __create_guild_data_remotedb__(self, guild_id: int):
         try:
@@ -17,14 +28,14 @@ class GuildCache():
             # await s2a(self.database.db.servers.insert_one)({"guild_id": guild_id, "webhook_uri": None})
         except Exception as e:
             logger.error(f"Đã xảy ra lỗi khi tạo dữ liệu guild {guild_id} trên database: {repr(e)}")
-    
+
     async def __remove_guild_data_remotedb__(self, guild_id: int):
         try:
             await s2a(self.database.db.language.delete_one)({"guild_id": guild_id})
             # await s2a(self.database.db.servers.delete_one)({"guild_id": guild_id})
         except Exception as e:
             logger.error(f"Đã xảy ra lỗi khi xoá dữ liệu guild {guild_id} trên database: {repr(e)}")
-    
+
     async def __commit_all__(self):
         "Automatic commit cache to database every 10 minutes"
         while True:
@@ -33,12 +44,12 @@ class GuildCache():
             for guild_id in self.storage:
                 if await self.commit(guild_id): count += 1
             if count != 0: logger.info(f"Đã đồng bộ cache của {count} guilds lên database")
-            
+
 
     def __init__(self, mongo_client: MongoClient):
         self.database = mongo_client
         asyncio.create_task(self.__commit_all__())
-        
+
     def close(self):
         # TODO: thêm cái củ l này vào trong event shutdown
         logger.info("Đang lưu tất cả dữ liệu vào database")
@@ -54,9 +65,9 @@ class GuildCache():
                 logger.error(f"Đã xảy ra lỗi khi cập nhật dữ liệu guild {guild_id} lên database: {repr(e)}")
             finally:
                 count += 1
-        
+
         logger.info(f"Đã đồng bộ cache của {count} guilds lên database")
-        
+
     def get_guild(self, guild_id: int) -> dict:
         "Fetch guild data from remote database"
         guild = self.storage.get(guild_id, None)
@@ -82,7 +93,7 @@ class GuildCache():
             self.storage[guild_id] = data
             if remote_data_exist == False: asyncio.create_task(self.__create_guild_data_remotedb__(guild_id))
             return self.storage[guild_id]
-    
+
     def get(self, guild_id: int, properties: str):
         "Get guild properties"
         return self.get_guild(guild_id).get(properties, None)
@@ -93,14 +104,14 @@ class GuildCache():
         guild[properties] = value
         guild["synced"] = False
         if commit: asyncio.create_task(self.commit(guild_id, True))
-    
+
     def delete(self, guild_id: int):
         "Remove guild data"
         try:
             self.storage.pop(guild_id)
             asyncio.create_task(self.__remove_guild_data_remotedb__(guild_id))
         except: pass
-        
+
     async def commit(self, guild_id: int, force_sync: bool = False) -> bool:
         "Commit cache to remote database"
         guild = self.storage.get(guild_id, None)
@@ -115,17 +126,17 @@ class GuildCache():
             logger.error(f"Đã xảy ra lỗi khi cập nhật dữ liệu guild {guild_id} lên database: {repr(e)}")
             guild["synced"] = False
             return False
-        
-        
+
+
 
 class Server():
     def __init__(self):
-        pass
-    
+        self.guilds_webhook_cache: dict[int, str] = {}
+
     def close(self):
         self.cache.close()
-    
-        
+
+
     async def connect_to_MongoDB(self, serveruri = None):
         """Connect to the database, if Aval"""
         self.client = MongoClient(host=serveruri)
@@ -138,11 +149,11 @@ class Server():
 
     async def guild_language(self, guild_id: int) -> dict:
         return {"status": "DataFound", "language": self.cache.get(guild_id, "language")}
-        
+
     async def func_language(self, guild_id, language):
         self.cache.set(guild_id, "language", language)
         return {"status": "Done", "msg": "Đã cài đặt thành công"}
-            
+
     async def replace_language(self, guild_id: int, language: str):
         self.cache.set(guild_id, "language", language)
         return {"status": "Done", "msg": "Đã cập nhật thành công"}
@@ -150,6 +161,21 @@ class Server():
     async def remove_language_on_leave(self, guild_id: int):
         self.cache.delete(guild_id)
 
+    async def get_guild_webhook(self, guild_id: int):
+
+        guild_webhook = self.guilds_webhook_cache.get(guild_id)
+
+        if guild_webhook is None:
+            guild_webhook = await self.get_webhook(guild_id)
+            self.guilds_webhook_cache[guild_id] = guild_webhook
+
+        return guild_webhook # Return webhook_uri or None
+
+    async def delcache(self, guild_id: int):
+        try:
+            del self.guilds_webhook_cache[guild_id]
+        except KeyError:
+            pass
 
     async def check_role(self ,guild: int, role_id: int):
         data = await s2a(self.ignored_roles.find_one)({"guild_id": guild, "role_id": role_id})
@@ -163,13 +189,13 @@ class Server():
                 "info": "No",
                 "data": "None"
             }
-        
+
         elif data == role_id:
             return {
                 "info": True,
                 "data": data
             }
-        
+
     async def check_mute(self, role: int, guild: int):
         data_ = await s2a(self.ignored_roles.find)({"guild_id": guild})
         data = [i["role_id"] for i in data_]
@@ -183,21 +209,21 @@ class Server():
             "info": False,
             "data": "None"
         }
-        
+
     async def check_database(self, guild):
         data = await s2a(self.servers.find_one)({"guild_id": guild})
         if not data:
             return {"status": "No_Data"}
         else:
             return {"status": "Data_Found", "webhook_uri": data["webhook_uri"]}
-        
+
     async def check_server_db(self, guild_id: int):
         data = await s2a(self.servers.find_one)({"guild_id": guild_id})
         if data is None:
             return False
         else:
             return True
-        
+
     async def get_ignored_roles(self, guild_id: int):
         data = await s2a(self.ignored_roles.find)({"guild_id": guild_id})
         if data is None:
@@ -209,19 +235,14 @@ class Server():
                 "status": "Data_Found",
                 "role_id": data["role_id"]
             }
-    
+
     async def get_webhook(self, guild_id: int):
         data = await s2a(self.servers.find_one)({"guild_id": guild_id})
         if data is None:
-            return {
-                "status": "No_Data"
-            }
+            return None
         else:
-            return {
-                "status": "Data_Found",
-                "webhook_uri": data["webhook_uri"]
-            }
-        
+            return data["webhook_uri"]
+
     async def setupserverlog(self, guild_id: int, webhook_uri: str):
         data = await s2a(self.servers.find_one)({"guild_id": guild_id})
         if data is None:
@@ -233,7 +254,7 @@ class Server():
             return {
                 "status": "error"
             }
-    
+
     async def remove_server_log(self, guild_id: int, webhook_uri: str):
         try:
             await s2a(self.servers.delete_one)({"guild_id": guild_id, "webhook_uri": webhook_uri})
@@ -244,8 +265,8 @@ class Server():
             return {
                 "status": "failed"
             }
-        
-        
+
+
     async def setup_ignored_roles(self, guild_id: int, role_id: int):
         data = await s2a(self.ignored_roles.find_one)({"guild_id": guild_id, "role_id": role_id})
         if data is None:
@@ -259,8 +280,8 @@ class Server():
             return {
                 "status": "success",
                 "action": "delete"
-            }    
-            
+            }
+
     async def remove_ignored_role_data(self, guild_id: int):
         data = await self.get_ignored_roles(guild_id)
         if data["status"] == "No_data":

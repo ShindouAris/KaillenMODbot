@@ -47,6 +47,7 @@ class ClientUser(commands.AutoShardedBot):
         
     def close(self):
         self.serverdb.close()
+        self.serverdb.guilds_webhook_cache.clear()
         return super().close()
     
 

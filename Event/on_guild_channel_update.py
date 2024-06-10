@@ -15,7 +15,7 @@ class OnGuildChannelUpdate(commands.Cog):
         if before.name.startswith("ticket"): #! Ingore ticket channel
             return
         if before.name != after.name:
-            data = await self.client.serverdb.get_webhook(before.guild.id)
+            data = await self.client.serverdb.get_guild_webhook(before.guild.id)
 
             if data is None:
                 return
@@ -23,7 +23,7 @@ class OnGuildChannelUpdate(commands.Cog):
             language = await self.client.serverdb.guild_language(before.guild.id)
 
             try:
-                channel = data["webhook_uri"]
+                channel = data
             except KeyError:
                 return
 

@@ -10,8 +10,8 @@ class GuildEntry(commands.Cog):
         self.client = bot
         
         
-    @commands.Cog.listener()
-    async def on_guild_remove(self, guild: disnake.Guild):
+    @commands.Cog.listener("on_guild_remove")
+    async def remove_data(self, guild: disnake.Guild):
 
         print(f"Bị xóa khỏi máy chủ: {guild.name} - [{guild.id}]")
         data = await self.client.serverdb.get_webhook(guild.id)
