@@ -1,22 +1,24 @@
-from pymongo import MongoClient
-from asgiref.sync import sync_to_async as s2a
-import logging
 import asyncio
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from utils.ClientUser import ClientUser
+import logging
+
+from asgiref.sync import sync_to_async as s2a
+from pymongo import MongoClient
+
+# from typing import TYPE_CHECKING
+# if TYPE_CHECKING:
+#     from utils.ClientUser import ClientUser
 
 logger = logging.getLogger(__name__)
 
-class db:
-    GuildSetting = "GuildSetting"
-
-db.GuildSetting = {
-        "guild_id": None,
-        "webhook_url": None,
-        "language": "vi",
-        "ignore_roles": []
-    }
+# class db:
+#     GuildSetting = "GuildSetting"
+#
+# db.GuildSetting = {
+#         "guild_id": None,
+#         "webhook_url": None,
+#         "language": "vi",
+#         "ignore_roles": []
+#     }
 
 class GuildCache():
     storage: dict[int, dict] = {}
@@ -51,7 +53,6 @@ class GuildCache():
         asyncio.create_task(self.__commit_all__())
 
     def close(self):
-        # TODO: thêm cái củ l này vào trong event shutdown
         logger.info("Đang lưu tất cả dữ liệu vào database")
         count = 0
         for guild_id in self.storage:
@@ -131,7 +132,7 @@ class GuildCache():
 
 class Server():
     def __init__(self):
-        self.guilds_webhook_cache: dict[int, str] = {}
+        self.guilds_webhook_cache: dict[int, str] = {} # {1234567890: "https://localhost:2002/webhook/12345678910/1234567890abcde"}
 
     def close(self):
         self.cache.close()
@@ -165,15 +166,23 @@ class Server():
 
         guild_webhook = self.guilds_webhook_cache.get(guild_id)
 
+        if guild_webhook == " ":
+            return None # Catch value " " and return None
+
         if guild_webhook is None:
             guild_webhook = await self.get_webhook(guild_id)
+
+            if guild_webhook is None:
+                self.guilds_webhook_cache[guild_id] = " " # Set webhook uri value " "
+                guild_webhook = None
+
             self.guilds_webhook_cache[guild_id] = guild_webhook
 
-        return guild_webhook # Return webhook_uri or None
+        return guild_webhook
 
     async def delcache(self, guild_id: int):
         try:
-            del self.guilds_webhook_cache[guild_id]
+            self.guilds_webhook_cache.pop(guild_id)
         except KeyError:
             pass
 
