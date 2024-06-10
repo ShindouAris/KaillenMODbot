@@ -1,6 +1,6 @@
 {
-    "user_added_role": "Role đã được {userName} thêm vào: {AddedRole}",
-    "user_removed_role": "Role đã bị loại bỏ khỏi {userName}: {AddedRole}",
+    "user_added_role": "Role đã được {userName} thêm vào: {role}",
+    "user_removed_role": "Role đã bị loại bỏ khỏi {userName}: {role}",
     "message_edit": "Tin nhắn được chỉnh sửa:",
     "message_edit_msg": "Tin nhắn được gửi bởi {mention_author} đã sửa trong {channel}",
     "message_delete": "Tin nhắn đã xóa",
