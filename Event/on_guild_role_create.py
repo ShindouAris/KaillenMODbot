@@ -1,7 +1,9 @@
-import disnake
-from disnake.ext import commands
-import pytz # if you don't have this, do pip install pytz, it's used for timezones
 from datetime import datetime
+
+import disnake
+import pytz  # if you don't have this, do pip install pytz, it's used for timezones
+from disnake.ext import commands
+
 from utils.ClientUser import ClientUser
 
 HCM = pytz.timezone('Asia/Ho_Chi_Minh')
@@ -20,7 +22,7 @@ class OnGuildRoleCreate(commands.Cog):
         if data is None:
             return
         try:
-            channel = data["webhook_uri"]
+            channel = data
         except KeyError:
             return
         
