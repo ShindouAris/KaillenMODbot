@@ -1,7 +1,7 @@
 {
     "active_server_log_msg": "<:verify:1134033164151566460> Đã kích hoạt server log cho máy chủ {guild_name}\nKênh đã thiết lập: {channel_mention}\n`Nếu muốn xóa đi chức năng này, hãy kick bot ra khỏi máy chủ và bot sẽ tự động xóa dữ liệu của các bạn :>`",
     "add_ignore_role_msg": "Đã thêm role {role_name} vào danh sách bỏ qua",
-    "remove_ignore_role_msg": "Đã xóa role {role_name} vào danh sách bỏ qua",
+    "remove_ignore_role_msg": "Đã xóa role {role_name} khỏi danh sách bỏ qua",
     "interact_user": "Người thực hiện: {user}",
     "change_server_log_channel": "<:verify:1134033164151566460> Đã thay đổi kênh server log cho máy chủ {guild_name}\nKênh đã thiết lập: {channel_mention}",
     "server_log_not_found": "Vui lòng sử dụng lệnh\n```/serverlog```\nĐể thiết lập hệ thống log máy chủ\nHoặc bấm vào đây {cmd}",
