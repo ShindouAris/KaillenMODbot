@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+import asyncio
+import logging
 import os
+
 import disnake
-from colorama import *
 from disnake.ext import commands
-from utils.server.server import Server  
+
 from utils.server.language_handle import LocalizationManager
 from utils.server.process_webhook import Process_webhook
-import logging
-from utils.server.server import GuildCache
+from utils.server.server import Server
 
 logger = logging.getLogger(__name__)
 
@@ -21,16 +22,15 @@ class ClientUser(commands.AutoShardedBot):
         self.db =None
         self.handle_language = LocalizationManager()
         self.webhook_utils = Process_webhook()
+        self.remote_git_url = os.environ.get("SOURCE")
+        self.task = asyncio
         
     
     async def on_ready(self):
             logger.info(f"Client: {self.user.name} - {self.user.id} Ready")
             await self.process_rpc()
-            if not os.environ.get("MONGOSERVER"):
-                logger.warning(f"No MongoDB database connected, abort")
-                return
-            await self.serverdb.connect_to_MongoDB(os.environ.get("MONGOSERVER"))
-            self.handle_language.load_localizations()
+
+
             
     async def on_resume(self):
         logger.info(f"Client Resumed")
@@ -49,7 +49,7 @@ class ClientUser(commands.AutoShardedBot):
         self.serverdb.close()
         self.serverdb.guilds_webhook_cache.clear()
         return super().close()
-    
+
 
     def load_modules(self):
 
@@ -133,14 +133,20 @@ def start():
                         sync_guild_commands=sync_cfg
                     )  
     
-    bot  = ClientUser(intents=intents, command_prefix="k!", command_sync_flag=command_sync_config)        
+    bot  = ClientUser(intents=intents, command_prefix="k!", command_sync_flag=command_sync_config)
     
     bot.load_modules()
     
     bot.load_events()
-    
 
-    
+    bot.handle_language.load_localizations()
+
+    if not os.environ.get("MONGOSERVER"):
+        logger.warning(f"No MongoDB database connected, abort")
+        exit()
+
+    bot.task.run(bot.serverdb.connect_to_MongoDB(os.environ.get("MONGOSERVER")))
+
     try:
         bot.run(DISCORD_TOKEN)
     except Exception as e:

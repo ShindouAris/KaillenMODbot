@@ -3,10 +3,11 @@
 # Chỉ cần import vào thôi, code nó tự chạy <(")
 #########################################################
 
-from colorama import Fore, Style, init
 import logging
-from sys import stdout, stderr
 from os import makedirs
+from sys import stdout, stderr
+
+from colorama import Fore, Style, init
 
 # Create file .logs/bot.log if not exist
 try:
@@ -20,8 +21,12 @@ init(autoreset=True)
 
 class SpectificLevelFilter(logging.Filter):
     ## Logging filter that allow only the spectified level to be processed
-	def __init__(self, level: int): self.level = level
-	def filter (self, record) -> bool: return record.levelno == self.level
+    def __init__(self, level: int):
+            super().__init__()
+            self.level = level
+
+    def filter(self, record) -> bool:
+            return record.levelno == self.level
 
 ## Format (console only)
 INFO_FORMAT = f"{Style.DIM}[%(asctime)s]{Style.RESET_ALL} [%(name)s:%(lineno)d] [✅] {Fore.GREEN}[%(levelname)s] - %(message)s{Style.RESET_ALL}"
@@ -52,6 +57,6 @@ fileHandler.setFormatter(logging.Formatter("%(asctime)s %(name)s:%(lineno)d [%(l
 
 ## Configure
 logging.basicConfig(
-	level=logging.INFO,
-	handlers=[infoHandler, warningHandler, errorHandler, fileHandler]
+    level=logging.INFO,
+    handlers=[infoHandler, warningHandler, errorHandler, fileHandler]
 )

@@ -1,7 +1,9 @@
-import disnake
-from disnake.ext import commands
-import pytz # if you don't have this, do pip install pytz, it's used for timezones
 from datetime import datetime
+
+import disnake
+import pytz  # if you don't have this, do pip install pytz, it's used for timezones
+from disnake.ext import commands
+
 from utils.ClientUser import ClientUser as BotCore
 
 HCM = pytz.timezone('Asia/Ho_Chi_Minh')
@@ -13,7 +15,7 @@ class OnMessageDelete(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message: disnake.Message):
         try:
-            check = await self.client.serverdb.check_mute(message.author.top_role.id, message.guild.id)
+            check = await self.client.serverdb.check_mute(message.author.roles, message.guild.id)
         except AttributeError: #! Ignore DM
             return
         if message.author.bot:
@@ -29,12 +31,8 @@ class OnMessageDelete(commands.Cog):
 
         if data is None:
             return
-        try:
-            channel = data
-        except KeyError:
-            return  # Ignore if channel is None
-        
-        
+
+        channel = data
 
         embed = disnake.Embed(
             title=self.client.handle_language.get(language["language"], 'user',"message_delete"),

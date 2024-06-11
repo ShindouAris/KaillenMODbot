@@ -1,7 +1,9 @@
-import disnake
-from disnake.ext import commands
-import pytz # if you don't have this, do pip install pytz, it's used for timezones
 from datetime import datetime
+
+import disnake
+import pytz  # if you don't have this, do pip install pytz, it's used for timezones
+from disnake.ext import commands
+
 from utils.ClientUser import ClientUser as BotCore
 
 HCM = pytz.timezone('Asia/Ho_Chi_Minh')
@@ -20,10 +22,9 @@ class BanEvent(commands.Cog):
         if data is None:
             return
         
-        try:
-            channel = data
-        except KeyError:
-            return
+
+        channel = data
+
 
         embed = disnake.Embed(
             title=self.client.handle_language.get(language["language"], 'user',"ban_user"),

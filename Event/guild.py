@@ -15,7 +15,7 @@ class GuildEntry(commands.Cog):
     @commands.Cog.listener("on_guild_remove")
     async def remove_data(self, guild: disnake.Guild):
 
-        print(f"Bị xóa khỏi máy chủ: {guild.name} - [{guild.id}]")
+        logger.info(f"Bị xóa khỏi máy chủ: {guild.name} - [{guild.id}]")
         data = await self.client.serverdb.get_guild_webhook(guild.id)
         
         if data["status"] == "No_Data":
@@ -30,6 +30,6 @@ class GuildEntry(commands.Cog):
             await self.client.serverdb.delcache(guild.id)
         except Exception as e:
             logger.error(f"Đã xảy ra lỗi {e}")
-            ...
+
 
 def setup(bot: ClientUser): bot.add_cog(GuildEntry(bot))

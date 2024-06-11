@@ -1,7 +1,9 @@
-import disnake
-from disnake.ext import commands
-import pytz # if you don't have this, do pip install pytz, it's used for timezones
 from datetime import datetime
+
+import disnake
+import pytz  # if you don't have this, do pip install pytz, it's used for timezones
+from disnake.ext import commands
+
 from utils.ClientUser import ClientUser
 
 HCM = pytz.timezone('Asia/Ho_Chi_Minh')
@@ -14,6 +16,10 @@ class OnGuildChannelUpdate(commands.Cog):
     async def on_guild_channel_update(self, before: disnake.TextChannel, after: disnake.TextChannel):
         if before.name.startswith("ticket"): #! Ingore ticket channel
             return
+
+        if after is not disnake.TextChannel:
+            return
+
         if before.name != after.name:
             data = await self.client.serverdb.get_guild_webhook(before.guild.id)
 

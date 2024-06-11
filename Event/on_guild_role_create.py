@@ -21,11 +21,9 @@ class OnGuildRoleCreate(commands.Cog):
 
         if data is None:
             return
-        try:
-            channel = data
-        except KeyError:
-            return
-        
+
+        channel = data
+
         embed = disnake.Embed(
             title=self.client.handle_language.get(language["language"], 'role',"role_created"),
             description=self.client.handle_language.get(language["language"], 'role',"mention_role_created").format(role = role.mention),

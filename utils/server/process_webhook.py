@@ -1,5 +1,5 @@
+from aiohttp import ClientSession
 from disnake import Webhook
-import aiohttp
 
 
 class Process_webhook():
@@ -7,7 +7,18 @@ class Process_webhook():
         self.__init__ = None
     
     async def process_webhook(self, webhook_uri, embed):
+        """WEBHOOK MAIN"""
         if webhook_uri is None: return
-        async with aiohttp.ClientSession() as session:
+        async with ClientSession() as session:
             webhok = Webhook.from_url(webhook_uri, session=session)
             await webhok.send(embed=embed, username="Kaillen Mod bot", avatar_url="https://i.ibb.co/MRxRR8h/boticon.png")
+
+    async def test_webhook(self, webhook_uri):
+        """TEST WEBHOOK"""
+        async with ClientSession() as session:
+            kwargs = {
+                "url": webhook_uri,
+                "session": session
+            }
+            webhook = Webhook.from_url(**kwargs)
+            await webhook.send(content="Test OK")
