@@ -175,8 +175,8 @@ class Server():
             if guild_webhook is None:
                 self.guilds_webhook_cache[guild_id] = " " # Set webhook uri value " "
                 guild_webhook = None
-
-            self.guilds_webhook_cache[guild_id] = guild_webhook
+            else:
+                 self.guilds_webhook_cache[guild_id] = guild_webhook
 
         return guild_webhook
 
@@ -205,7 +205,7 @@ class Server():
                 "data": data
             }
 
-    async def check_mute(self, role: int, guild: int):
+    async def check_mute(self, role: list, guild: int):
         data_ = await s2a(self.ignored_roles.find)({"guild_id": guild})
         data = [i["role_id"] for i in data_]
         if role in data:
