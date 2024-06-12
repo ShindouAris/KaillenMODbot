@@ -235,7 +235,7 @@ class Server():
 
         # data = await self.get_role_by_guildID(guild)
 
-        if data["role_id"] is None or []:
+        if data is None:
             return False
 
         for roleData in data["role_id"]:
