@@ -15,12 +15,12 @@ class OnMessageEdit(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
         try:
-            check = await self.client.serverdb.check_mute(before.author.top_role.id, before.guild.id)
+            check = await self.client.serverdb.check_mute(before.author.roles, before.guild.id)
         except AttributeError: #! Ignore DM
             return
         if before.author.bot:
             return
-        elif check["info"] == True:
+        elif check != False:
             return
         else:
             pass
@@ -34,6 +34,7 @@ class OnMessageEdit(commands.Cog):
             return
 
         channel = data
+        message = after.jump_url
 
         embed = disnake.Embed(
             title=self.client.handle_language.get(language["language"], 'user',"message_edit"),
@@ -41,6 +42,7 @@ class OnMessageEdit(commands.Cog):
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )
+
 
         embed.add_field(name=self.client.handle_language.get(language["language"], "commands","before"), value=before.content, inline=False)
         embed.add_field(name=self.client.handle_language.get(language["language"], "commands","after"), value=after.content, inline=False)

@@ -132,7 +132,8 @@ class GuildCache():
 
 class Server():
     def __init__(self):
-        self.guilds_webhook_cache: dict[int, str] = {} # {1234567890: "https://localhost:2002/webhook/12345678910/1234567890abcde"}
+        self.guilds_webhook_cache: dict[int, str] = {} # { 1234567890: "https://localhost:2002/webhook/12345678910/1234567890abcde" }
+        self.role_cache: dict[int, list] = {}  # { 1234567890: [] }
 
     def close(self):
         self.cache.close()
@@ -180,44 +181,69 @@ class Server():
 
         return guild_webhook
 
-    async def delcache(self, guild_id: int):
+    async def get_role_by_guildID(self, guildID) -> list:
+
+        guild_roleID = self.role_cache.get(guildID)
+
+        if guild_roleID == []:
+            return []
+
+        if guild_roleID is None:
+            guild_roleID = await self.get_ignored_roles(guildID)
+            if guild_roleID == None:
+                self.role_cache[guildID] = []
+                return []
+            else:
+                self.role_cache[guildID] = guild_roleID
+
+        return guild_roleID
+
+
+    async def delrolecache(self, guildID):
+        try:
+            self.role_cache.pop(guildID)
+        except KeyError:
+            pass
+
+    async def delwebhookcache(self, guild_id: int):
         try:
             self.guilds_webhook_cache.pop(guild_id)
         except KeyError:
             pass
 
-    async def check_role(self ,guild: int, role_id: int):
-        data = await s2a(self.ignored_roles.find_one)({"guild_id": guild, "role_id": role_id})
+    async def check_role(self ,guildID: int, role_id: int) -> dict:
+        data = await s2a(self.ignored_roles.find_one)({"guild_id": guildID})
         if data is None:
             return {
                 "info": False,
                 "data": "None"
             }
-        elif data["role_id"] != role_id:
+        elif role_id not in data["role_id"]:
             return {
-                "info": "No",
+                "info": False,
                 "data": "None"
             }
 
-        elif data == role_id:
+        elif role_id in data["role_id"]:
             return {
                 "info": True,
                 "data": data
             }
 
-    async def check_mute(self, role: list, guild: int):
-        data_ = await s2a(self.ignored_roles.find)({"guild_id": guild})
-        data = [i["role_id"] for i in data_]
-        if role in data:
-            return {
-                "info": True,
-                "data": role
-            }
+    async def check_mute(self, role: str, guild: int) -> bool:
+        # data = await s2a(self.ignored_roles.find_one)({"guild_id": guild})
 
-        return {
-            "info": False,
-            "data": "None"
-        }
+        data = await self.get_role_by_guildID(guild)
+
+        if data is None or []:
+            return False
+
+        for roleData in data:
+            if str(roleData) not in role:
+                continue
+            else:
+                return True
+
 
     async def check_database(self, guild):
         data = await s2a(self.servers.find_one)({"guild_id": guild})
@@ -233,17 +259,14 @@ class Server():
         else:
             return True
 
-    async def get_ignored_roles(self, guild_id: int):
-        data = await s2a(self.ignored_roles.find)({"guild_id": guild_id})
-        if data is None:
-            return {
-                "status": "No_Data"
-            }
+    async def get_ignored_roles(self, guild_id: int) -> list | None:
+        data = await s2a(self.ignored_roles.find_one)({"guild_id": guild_id})
+
+        if data is None or []:
+            return None
         else:
-            return {
-                "status": "Data_Found",
-                "role_id": data["role_id"]
-            }
+            return data["role_id"]
+
 
     async def get_webhook(self, guild_id: int):
         data = await s2a(self.servers.find_one)({"guild_id": guild_id})
@@ -277,28 +300,31 @@ class Server():
 
 
     async def setup_ignored_roles(self, guild_id: int, role_id: int):
-        data = await s2a(self.ignored_roles.find_one)({"guild_id": guild_id, "role_id": role_id})
+        data = await s2a(self.ignored_roles.find_one)({"guild_id": guild_id})
         if data is None:
-            await s2a(self.ignored_roles.insert_one)({"guild_id": guild_id, "role_id": role_id})
+            await s2a(self.ignored_roles.insert_one)({"guild_id": guild_id, "role_id": [role_id]})
             return {
                 "status": "success",
                 "action": "insert"
             }
         else:
-            await s2a(self.ignored_roles.delete_one)({"guild_id": guild_id, "role_id": role_id})
+            await s2a(self.ignored_roles.update_one)({"guild_id": guild_id}, {"$push": {"role_id": role_id}})
             return {
                 "status": "success",
-                "action": "delete"
+                "action": "update_sql"
             }
+
+    async def remove_ignore_role(self, guildID, roleID):
+        await s2a(self.ignored_roles.update_one)({"guild_id": guildID}, {"$pull": {"role_id": roleID}})
 
     async def remove_ignored_role_data(self, guild_id: int):
         data = await self.get_ignored_roles(guild_id)
-        if data["status"] == "No_data":
+        if data is None:
             return {
                 "status": "no_data"
             }
         try:
-            await s2a(self.ignored_roles.delete_many)({"guild_id": guild_id})
+            await s2a(self.ignored_roles.delete_one)({"guild_id": guild_id})
             return {
                 "status": "done"
             }

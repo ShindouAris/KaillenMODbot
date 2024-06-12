@@ -1,10 +1,11 @@
+import traceback
+from typing import Union
+
 import disnake
 from disnake.ext import commands
 
 from utils.ClientUser import ClientUser
 from utils.error import ClientException, parse_error, paginator, send_message
-import traceback
-from typing import Union
 
 
 class HandleError(commands.Cog):
@@ -102,7 +103,7 @@ class HandleError(commands.Cog):
                 await self.on_legacy_command_error(ctx, e)
             return
         
-        language = await self.bot.serverdb.guild_language(ctx.guild_id)
+        language = await self.bot.serverdb.guild_language(ctx.guild.id)
         title_txt = self.bot.handle_language.get(language["language"], "error", 'error_title')
 
         error_msg = parse_error(ctx, error)

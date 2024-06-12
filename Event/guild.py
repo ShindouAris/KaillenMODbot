@@ -27,7 +27,8 @@ class GuildEntry(commands.Cog):
             await self.client.serverdb.remove_server_log(guild.id, guild_webhook)
             await self.client.serverdb.remove_ignored_role_data(guild.id)
             await  self.client.serverdb.remove_language_on_leave(guild.id)
-            await self.client.serverdb.delcache(guild.id)
+            await self.client.serverdb.delwebhookcache(guild.id)
+            await self.client.serverdb.delrolecache(guild.id)
         except Exception as e:
             logger.error(f"Đã xảy ra lỗi {e}")
 
