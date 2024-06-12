@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from typing import Any
 
 from asgiref.sync import sync_to_async as s2a
 from pymongo import MongoClient
@@ -181,12 +182,12 @@ class Server():
 
         return guild_webhook
 
-    async def get_role_by_guildID(self, guildID) -> list:
+    async def get_role_by_guildID(self, guildID) -> list | Any:
 
         guild_roleID = self.role_cache.get(guildID)
 
         if guild_roleID == []:
-            return []
+            return None
 
         if guild_roleID is None:
             guild_roleID = await self.get_ignored_roles(guildID)
@@ -234,8 +235,7 @@ class Server():
         data = await s2a(self.ignored_roles.find_one)({"guild_id": guild})
 
         # data = await self.get_role_by_guildID(guild)
-
-        if data is None:
+        if data is None or data["role_id"] == []:
             return False
 
         for roleData in data["role_id"]:
