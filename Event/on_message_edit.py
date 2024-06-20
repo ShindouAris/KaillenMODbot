@@ -20,7 +20,7 @@ class OnMessageEdit(commands.Cog):
             return
         if before.author.bot:
             return
-        elif check != False:
+        elif check == True:
             return
         else:
             pass
