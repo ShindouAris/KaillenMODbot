@@ -15,7 +15,7 @@ class OnMessageEdit(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
         try:
-            check = await self.client.serverdb.check_mute(before.author.roles, before.guild.id)
+            check = await self.client.serverdb.check_mute(before.author.top_role.id, before.guild.id)
         except AttributeError: #! Ignore DM
             return
         if before.author.bot:
