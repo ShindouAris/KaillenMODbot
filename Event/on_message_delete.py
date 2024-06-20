@@ -20,7 +20,7 @@ class OnMessageDelete(commands.Cog):
             return
         if message.author.bot:
             return
-        elif check != False:
+        elif check == True:
             return
         else:
             pass
