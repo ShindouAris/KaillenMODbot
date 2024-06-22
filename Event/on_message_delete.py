@@ -14,18 +14,12 @@ class OnMessageDelete(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: disnake.Message):
-        try:
-            check = await self.client.serverdb.check_mute(message.author.top_role.id, message.guild.id)
-        except AttributeError: #! Ignore DM
-            return
-        if message.author.bot:
-            return
-        elif check == True:
-            return
-        else:
-            pass
-
+        if not message.guild or message.author.bot: return
+        check = await self.client.serverdb.check_mute(message.author.roles, message.guild.id)
         
+        if check == True:
+            return
+
         data = await self.client.serverdb.get_guild_webhook(message.guild.id)
         language = await self.client.serverdb.guild_language(message.guild.id)
 

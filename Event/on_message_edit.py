@@ -13,17 +13,10 @@ class OnMessageEdit(commands.Cog):
         self.client = client
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before, after):
-        try:
-            check = await self.client.serverdb.check_mute(before.author.top_role.id, before.guild.id)
-        except AttributeError: #! Ignore DM
-            return
-        if before.author.bot:
-            return
-        elif check == True:
-            return
-        else:
-            pass
+    async def on_message_edit(self, before: disnake.Member, after):
+        if not before.guild or before.bot: return
+        check = await self.client.serverdb.check_mute(before.roles, before.guild.id)
+        if check == True: return
         if before.content == after.content:
             return #! Ignore if the message is the same
         language = await self.client.serverdb.guild_language(before.guild.id)
@@ -42,8 +35,10 @@ class OnMessageEdit(commands.Cog):
             color=disnake.Color.red(),
             timestamp=datetime.now(HCM),
         )
-
-
+        try:
+         embed.add_field(name="", value=f"[Message]({message})", inline=False)
+        except Exception as e:
+            print(e)
         embed.add_field(name=self.client.handle_language.get(language["language"], "commands","before"), value=before.content, inline=False)
         embed.add_field(name=self.client.handle_language.get(language["language"], "commands","after"), value=after.content, inline=False)
 

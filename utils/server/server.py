@@ -232,17 +232,19 @@ class Server():
             }
 
     async def check_mute(self, role: int, guild: int) -> bool:
-        data = await s2a(self.ignored_roles.find_one)({"guild_id": guild})
+        # data = await s2a(self.ignored_roles.find_one)({"guild_id": guild})
 
-        # data = await self.get_role_by_guildID(guild)
-        if data is None or data["role_id"] == []:
+        data = await self.get_role_by_guildID(guild)
+        if data is None or data == []:
             return False
 
-        for roleData in data["role_id"]:
+        for roleData in data:
             if roleData != role:
                 continue
             else:
                 return True
+
+        return False
 
 
     async def check_database(self, guild):

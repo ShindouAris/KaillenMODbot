@@ -7,11 +7,11 @@ from random import randint
 import aiohttp
 import re
 from urllib.parse import urlparse
-from utils.client import BotCore
+from utils.ClientUser import ClientUser
 from asyncio import sleep
 class emoji(commands.Cog):
     def __init__(self, bot) -> None:
-        self.bot: commands.Bot = bot
+        self.bot: ClientUser = bot
 
     @commands.slash_command(name="emoji", description="Nhóm lệnh quản lý emoji trên server của bạn")
     async def emoji(self, ctx): pass
@@ -189,5 +189,5 @@ class emoji(commands.Cog):
             )
             await ctx.edit_original_response(embed=embed)
 
-def setup(bot: BotCore):
+def setup(bot: ClientUser):
     bot.add_cog(emoji(bot))
