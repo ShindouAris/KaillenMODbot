@@ -245,7 +245,7 @@ class Server():
             else:
                 return True
 
-        return False
+        
 
 
     async def check_database(self, guild):
