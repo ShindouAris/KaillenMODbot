@@ -231,7 +231,7 @@ class Server():
                 "data": data
             }
 
-    async def check_mute(self, role: int, guild: int) -> bool:
+    async def check_mute(self, role: str, guild: int) -> bool:
         # data = await s2a(self.ignored_roles.find_one)({"guild_id": guild})
 
         data = await self.get_role_by_guildID(guild)
@@ -239,7 +239,7 @@ class Server():
             return False
 
         for roleData in data:
-            if roleData != role:
+            if str(roleData) not in role:
                 continue
             else:
                 return True
