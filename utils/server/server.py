@@ -190,12 +190,13 @@ class Server():
             return None
 
         if guild_roleID is None:
-            guild_roleID = await self.get_ignored_roles(guildID)
-            if guild_roleID == None:
+            db_guild_roleID = await self.get_ignored_roles(guildID)
+            if db_guild_roleID == None:
                 self.role_cache[guildID] = []
                 return []
             else:
-                self.role_cache[guildID] = guild_roleID
+                self.role_cache[guildID] = db_guild_roleID
+                return db_guild_roleID
 
         return guild_roleID
 
