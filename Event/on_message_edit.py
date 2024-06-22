@@ -15,7 +15,7 @@ class OnMessageEdit(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, before: disnake.Member, after):
         if not before.guild or before.author.bot: return
-        check = await self.client.serverdb.check_mute(before.roles, before.guild.id)
+        check = await self.client.serverdb.check_mute(before.author.roles, before.guild.id)
         if check == True: return
         if before.content == after.content:
             return #! Ignore if the message is the same
