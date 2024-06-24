@@ -8,5 +8,6 @@
     "unban_user": "Bỏ cấm thành viên:",
     "mention_user_unban": "{user} đã được bỏ cấm khỏi máy chủ!",
     "ban_user": "Thành viên bị cấm khỏi máy chủ:",
-    "mention_user_banned": "{user} đã bị cấm khỏi máy chủ!"
+    "mention_user_banned": "{user} đã bị cấm khỏi máy chủ!",
+    "go_to_msg": "Nhảy đến tin nhắn"
 }
