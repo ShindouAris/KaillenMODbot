@@ -130,6 +130,68 @@ class GuildCache():
             return False
 
 
+class GuildIgnoredRoleEntity():
+    id: int
+    roles: set[int] = () # dùng set đi ôg, set dùng trong trường hợp này nó tối ưu lắm :yum:
+    synced = False
+    
+    def contain(self, role_id: int) -> bool:
+        "Return True if role_id contains in ignored roles, false otherwises"
+        return role_id in self.roles
+    
+    def add(self, role_id: int) -> None:
+        "Add role_id to ignored roles"
+        self.roles.add(role_id)
+        self.synced = False
+        
+    def remove(self, role_id: int) -> None:
+        "Remove role_id to ignored roles"
+        self.roles.discard(role_id)
+        self.synced = False
+        
+    def get_array(self) -> list[int]:
+        return list(self.roles)
+        
+    
+
+class GuildIgnoredRoleCache():
+    storage: dict[GuildIgnoredRoleEntity] = {}
+    
+    async def __commit_all__(self):
+        count = 0
+        for guild_id in self.collection:
+            if await self.commit(guild_id): count += 1
+        if count != 0: logger.info(f"Đã đồng bộ cache của {count} guilds lên database")
+    
+    
+    async def __sync_task__(self):
+        while True:
+            await asyncio.sleep(600)
+            await self.__commit_all__()
+    
+    
+    def __init__(self, db_client: MongoClient):
+        self.collection = db_client.db.ignored_roles
+        asyncio.create_task(self.__sync_task__())
+        
+    
+    async def get(self, guild_id: int) -> GuildIgnoredRoleEntity:
+        try: return self.storage[guild_id]
+        except KeyError:
+            self.storage[guild_id] = GuildIgnoredRoleEntity()
+            entity: GuildIgnoredRoleEntity = self.storage[guild_id]
+            data = await s2a(self.collection.find_one)({"guild_id": guild_id})
+            if data is not None:
+                for role_id in data["role_id"]: entity.add(role_id)
+                entity.synced = True
+            return entity 
+                
+    
+    async def get_ignored_roles(self, guild_id: int) -> list[int]:
+        guild = await self.get(guild_id)
+        return guild.get_array()
+        
+    
 
 class Server():
     def __init__(self):
@@ -148,6 +210,7 @@ class Server():
         self.language = self.client.db.language
         logger.info(f"Connected to Server Database")
         self.cache = GuildCache(self.client)
+        self.ignored_roles_cache = GuildIgnoredRoleCache(self.client)
 
 
     async def guild_language(self, guild_id: int) -> dict:

@@ -6,3 +6,4 @@ asgiref
 pytz
 psutil
 humanize
+requests

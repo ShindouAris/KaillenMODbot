@@ -7,15 +7,18 @@ desc_prefix = "[🔞 Nsfw]"
 TagList = ["waifu", "neko", "trap", "blowjob"]
 base_api = "https://api.waifu.pics/"
 
+
+async def make_request(type: str, category: str) -> str:
+    resp = requests.get(base_api + type + "/" + category)
+    return resp.json()["url"]
+
+
 class Nsfw(commands.Cog):
     def __init__(self, client: ClientUser):
         self.client = client
         # base_api = "https://api.waifu.pics/"
         
 
-    async def make_request(type: str, category:str) -> str:
-        resp = requests.get(base_api + type + "/" + category)
-        return resp["url"]
 
     @commands.is_nsfw()
     @commands.cooldown(1, 15, commands.BucketType.user)
@@ -24,7 +27,10 @@ class Nsfw(commands.Cog):
                             options=[Option(name="tag", description="something idk")])
     async def nsfw(self, ctx: ApplicationCommandInteraction, tag: str = "waifu"):
         await ctx.response.defer()
-        pic = await self.make_request("nsfw", tag)
+        try:
+            pic = await make_request("nsfw", tag)
+        except:
+            pass
         emb = Embed(title="😋")
         emb.set_image(pic)
         await ctx.edit_original_response(embed=emb)
