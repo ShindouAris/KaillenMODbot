@@ -5,5 +5,6 @@
     "missing_permissions_error": "Bạn không có các quyền sau để thực hiện lệnh này: ```{permissions}```",
     "no_private_message_error": "Lệnh này không thể chạy trên tin nhắn riêng tư.",
     "command_on_cooldown_error": "**Bạn phải đợi {time} nữa mới có thể sử dụng lệnh này.**",
-    "error_title": "**Đã có một sự cố đã xảy ra:**"
+    "error_title": "**Đã có một sự cố đã xảy ra:**",
+    "nsfw_required": "Không thể thực thi lệnh này, yêu cầu kênh phải bật giới hạn độ tuổi"
 }

@@ -5,5 +5,6 @@
     "bot_missing_permissions_error": "I do not have the following permissions to execute this command: ```{permissions}```",
     "missing_permissions_error": "You do not have the following permissions to execute this command: ```{permissions}```",
     "no_private_message_error": "This command cannot be run on private messages.",
-    "command_on_cooldown_error": "**You have to wait {time} before you can use this command.**"
+    "command_on_cooldown_error": "**You have to wait {time} before you can use this command.**",
+    "nsfw_required": "Unable to execute command, this channel must enable age restriction feature"
 }

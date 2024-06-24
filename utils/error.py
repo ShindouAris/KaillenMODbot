@@ -40,6 +40,10 @@ def parse_error(
                 
     if isinstance(error, commands.NoPrivateMessage):
             error_txt = localization_manager.get(language, 'error','no_private_message_error')
+
+    
+    if isinstance(error, commands.NSFWChannelRequired):
+                error_txt = localization_manager.get(language, "error", "nsfw_required")
         
     if isinstance(error, commands.CommandOnCooldown):
             remaing = int(error.retry_after)
