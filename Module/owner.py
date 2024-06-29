@@ -70,7 +70,7 @@ class Owner(commands.Cog):
     async def restart(self, ctx: disnake.ApplicationCommandInteraction):
         await ctx.send("Đang khởi động lại...")
         await asyncio.sleep(5)
-        self.bot.close()
+        await self.bot.close()
         try:
             os.system("python3 main.py")
         except:
@@ -81,7 +81,7 @@ class Owner(commands.Cog):
     async def shutdown(self, ctx: disnake.ApplicationCommandInteraction):
         await ctx.send("GoodBye")
         await asyncio.sleep(5)
-        self.bot.close()
+        await self.bot.close()
 
 
     @commands.is_owner()

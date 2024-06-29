@@ -9,7 +9,10 @@ base_api = "https://api.waifu.pics/"
 
 
 async def make_request(type: str, category: str) -> str:
+
     resp = requests.get(base_api + type + "/" + category)
+    if resp.status_code != 200:
+        return None
     return resp.json()["url"]
 
 
@@ -27,10 +30,8 @@ class Nsfw(commands.Cog):
                             options=[Option(name="tag", description="something idk")])
     async def nsfw(self, ctx: ApplicationCommandInteraction, tag: str = "waifu"):
         await ctx.response.defer()
-        try:
-            pic = await make_request("nsfw", tag)
-        except:
-            pass
+        pic = await make_request("nsfw", tag)
+        if pic is None: return ctx.edit_original_response("⚠️")
         emb = Embed(title="😋")
         emb.set_image(pic)
         await ctx.edit_original_response(embed=emb)

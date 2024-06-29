@@ -9,7 +9,7 @@ from disnake.ext import commands
 
 from utils.server.language_handle import LocalizationManager
 from utils.server.process_webhook import Process_webhook
-from utils.server.server import Server
+from utils.server.databases import Server
 
 logger = logging.getLogger(__name__)
 
